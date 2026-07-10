@@ -1,0 +1,12 @@
+{
+  "env": {
+    "CLAUDE_CODE_USE_BEDROCK": "1",
+    "AWS_REGION": "us-east-1",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "us.anthropic.claude-sonnet-4-6"
+  },
+  "permissions": {
+    "allow": [
+      "PowerShell"
+    ]
+  }
+}
