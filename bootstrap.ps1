@@ -3,7 +3,8 @@
 
 # Блок проверки прав Администратора. 
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    $bootstrapUrl = "https://raw.githubusercontent.com/Kuka001/WinOpt/main/bootstrap.ps1"
+    # Ссылка для перезапуска (используем обход кэша)
+    $bootstrapUrl = "https://raw.githubusercontent.com/Kuka001/WinOpt/main/bootstrap.ps1?v=$(Get-Date -Format 'yyyyMMddHHmmss')"
     Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"iwr -useb '$bootstrapUrl' | iex`"" -Verb RunAs
     exit
 }
@@ -36,13 +37,20 @@ $extractedFolder = Get-ChildItem -Path $tempDir -Directory | Select-Object -Firs
 if ($extractedFolder) {
     Write-Host "Нормализация окончаний строк (LF -> CRLF)..." -ForegroundColor Yellow
     
-    # Критически важно: cmd.exe ломается на LF-окончаниях строк.
-    # Преобразуем все .bat файлы в CRLF и сохраняем строго в UTF-8 без BOM.
-    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    # Побайтовая конвертация: ищем байт 10 (LF) и, если перед ним нет байта 13 (CR), 
+    # вставляем байт 13. Это на 100% защищает от повреждения кодировки (ANSI/UTF-8).
     Get-ChildItem -Path $extractedFolder.FullName -Recurse -Filter *.bat | ForEach-Object {
-        $content = [System.IO.File]::ReadAllText($_.FullName)
-        $normalized = $content -replace "\r?\n", "`r`n"
-        [System.IO.File]::WriteAllText($_.FullName, $normalized, $utf8NoBom)
+        $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
+        $newBytes = New-Object System.Collections.Generic.List[byte]
+        for ($i = 0; $i -lt $bytes.Length; $i++) {
+            if ($bytes[$i] -eq 10) { # LF
+                if ($i -eq 0 -or $bytes[$i-1] -ne 13) { # Если перед LF нет CR
+                    $newBytes.Add([byte]13) # Добавляем CR
+                }
+            }
+            $newBytes.Add($bytes[$i])
+        }
+        [System.IO.File]::WriteAllBytes($_.FullName, $newBytes.ToArray())
     }
 
     $startBat = Join-Path $extractedFolder.FullName "Start.bat"
