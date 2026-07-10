@@ -3,18 +3,33 @@
 
 $repoUrl = "https://github.com/Kuka001/WinOpt/archive/refs/heads/main.zip"
 
-# Надежный способ определить путь к Рабочему столу текущего пользователя
+# Определяем путь к Рабочему столу
 $desktopPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
-$finalFolder = Join-Path $desktopPath "Kazuma_Optimizer"
-# Если текущая рабочая папка консоли находится внутри папки назначения, 
-# выходим из неё в домашнюю директорию, чтобы избежать блокировки файлов Windows
-if ($pwd.Path -like "$finalFolder*") {
-    Set-Location $env:USERPROFILE
+
+# Алгоритм автоматического вычисления следующей версии папки
+$highest = 0
+
+# Ищем папки, подходящие под шаблон названия на Рабочем столе
+$folders = Get-ChildItem -Path $desktopPath -Directory -Filter "Kazuma_Optimizer_Git_version(*)"
+foreach ($folder in $folders) {
+    # Регулярным выражением извлекаем число из круглых скобок
+    if ($folder.Name -match 'Kazuma_Optimizer_Git_version\((\d+)\)') {
+        $num = [int]$Matches[1]
+        if ($num -gt $highest) {
+            $highest = $num
+        }
+    }
 }
+
+# Номер новой версии папки (если папок нет, $highest равен 0, поэтому новая папка получит номер 1)
+$nextNum = $highest + 1
+$folderName = "Kazuma_Optimizer_Git_version($nextNum)"
+$finalFolder = Join-Path $desktopPath $folderName
+
 $tempDir = Join-Path $env:TEMP "WinOptToolkit"
 $zipFile = Join-Path $env:TEMP "toolkit.zip"
 
-# Очистка временных папок от прошлых запусков
+# Очистка временных файлов в системной папке TEMP (не влияет на файлы на Рабочем столе)
 if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force -ErrorAction SilentlyContinue }
 if (Test-Path $zipFile) { Remove-Item $zipFile -Force -ErrorAction SilentlyContinue }
 
@@ -39,7 +54,7 @@ $extractedFolder = Get-ChildItem -Path $tempDir -Directory | Select-Object -Firs
 if ($extractedFolder) {
     Write-Host "Нормализация окончаний строк (LF -> CRLF)..." -ForegroundColor Yellow
     
-    # Побайтовое исправление строк во всех .bat файлах перед переносом
+    # Побайтовое исправление строк во всех .bat файлах перед переносом на Рабочий стол
     Get-ChildItem -Path $extractedFolder.FullName -Recurse -Filter *.bat | ForEach-Object {
         $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
         $newBytes = New-Object System.Collections.Generic.List[byte]
@@ -54,17 +69,11 @@ if ($extractedFolder) {
         [System.IO.File]::WriteAllBytes($_.FullName, $newBytes.ToArray())
     }
 
-    # Если папка уже существует на Рабочем столе, удаляем старую версию перед заменой
-    if (Test-Path $finalFolder) {
-        Remove-Item $finalFolder -Recurse -Force -ErrorAction SilentlyContinue
-    }
-
-    # Переносим распакованный проект на Рабочий стол и переименовываем в Kazuma_Optimizer
+    # Переносим распакованный проект на Рабочий стол с новым именем (конфликт исключен)
     Move-Item -Path $extractedFolder.FullName -Destination $finalFolder -Force
 
     Write-Host "Проект успешно сохранен на Рабочий стол!" -ForegroundColor Green
-    Write-Host "Путь к папке: $finalFolder" -ForegroundColor Green
-    Write-Host "Теперь вы можете запускать его вручную через файл Start.bat." -ForegroundColor Green
+    Write-Host "Создана новая папка: $folderName" -ForegroundColor Green
     
     # Автоматически открываем созданную папку в Проводнике
     Start-Process explorer.exe -ArgumentList "`"$finalFolder`""
