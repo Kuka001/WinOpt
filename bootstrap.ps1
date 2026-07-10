@@ -6,7 +6,11 @@ $repoUrl = "https://github.com/Kuka001/WinOpt/archive/refs/heads/main.zip"
 # Надежный способ определить путь к Рабочему столу текущего пользователя
 $desktopPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
 $finalFolder = Join-Path $desktopPath "Kazuma_Optimizer"
-
+# Если текущая рабочая папка консоли находится внутри папки назначения, 
+# выходим из неё в домашнюю директорию, чтобы избежать блокировки файлов Windows
+if ($pwd.Path -like "$finalFolder*") {
+    Set-Location $env:USERPROFILE
+}
 $tempDir = Join-Path $env:TEMP "WinOptToolkit"
 $zipFile = Join-Path $env:TEMP "toolkit.zip"
 
