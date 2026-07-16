@@ -21,6 +21,60 @@ function Write-Success { param($msg) Write-Host "[✓] $msg" -ForegroundColor Gr
 function Write-ErrorMsg{ param($msg) Write-Host "[✗] $msg" -ForegroundColor Red }
 function Write-Warn    { param($msg) Write-Host "[!] $msg" -ForegroundColor Yellow }
 
+$script:InSafeMode = $false
+try {
+    $safeBoot = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SafeBoot\Option" -ErrorAction SilentlyContinue).OptionValue
+    if ($null -ne $safeBoot) { $script:InSafeMode = $true }
+} catch {}
+if (-not $script:InSafeMode) {
+    try {
+        $smVal = (Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue).BootupState
+        if ($smVal -match "safe|fail-safe") { $script:InSafeMode = $true }
+    } catch {}
+}
+if ($script:InSafeMode) {
+    Write-Status "Safe Mode detected — Task Scheduler service will be started as needed."
+}
+
+$script:ScheduleSvcStarted = $false
+
+function Start-ScheduleServiceIfNeeded {
+    $svc = Get-Service "Schedule" -ErrorAction SilentlyContinue
+    if ($null -eq $svc)            { return $false }
+    if ($svc.Status -eq 'Running') { return $false }
+    try {
+        Write-Status "Starting Task Scheduler service for task management..."
+        Start-Service "Schedule" -ErrorAction Stop
+        $dl = (Get-Date).AddSeconds(12)
+        while ((Get-Service "Schedule" -EA SilentlyContinue).Status -ne 'Running' -and (Get-Date) -lt $dl) {
+            Start-Sleep -Milliseconds 200
+        }
+        if ((Get-Service "Schedule" -EA SilentlyContinue).Status -eq 'Running') {
+            Write-Success "Task Scheduler started successfully."
+            return $true
+        }
+        Write-Warn "Task Scheduler did not reach Running state — XML fallback will be used."
+        return $false
+    } catch {
+        Write-Warn "Could not start Task Scheduler: $_ — XML fallback will be used."
+        return $false
+    }
+}
+
+function Test-ScheduleServiceAvailable {
+    $svc = Get-Service "Schedule" -ErrorAction SilentlyContinue
+    return ($null -ne $svc -and $svc.Status -eq 'Running')
+}
+
+function Get-ScheduledTaskSafe {
+    param([string]$TaskPath, [string]$TaskName)
+    try {
+        return (Get-ScheduledTask -TaskPath $TaskPath -TaskName $TaskName -ErrorAction Stop)
+    } catch {
+        return $null
+    }
+}
+
 
 $script:CommunityLinks = @(
     [pscustomobject]@{ Label = "LLC - LOW LATENCY CORP - TELEGRAM"; Url = "https://t.me/LowLatencyCorp" },
@@ -2166,14 +2220,31 @@ function Disable-UpdateTasks {
         "\Microsoft\Windows\WindowsUpdate\sihboot"
     )
 
+    if ($script:InSafeMode) {
+        $script:ScheduleSvcStarted = Start-ScheduleServiceIfNeeded
+    }
+
     foreach ($task in $UpdateTasks) {
         $lastSlash  = $task.LastIndexOf('\')
         $taskFolder = $task.Substring(0, $lastSlash + 1)
         $taskName   = $task.Substring($lastSlash + 1)
 
-        $taskObj = Get-ScheduledTask -TaskPath $taskFolder -TaskName $taskName -ErrorAction SilentlyContinue
+        $taskObj = Get-ScheduledTaskSafe -TaskPath $taskFolder -TaskName $taskName
         if (-not $taskObj) {
-            Write-Status "Task not found (skipping): $task"
+            if (-not (Test-ScheduleServiceAvailable)) {
+                $taskFilePath = Join-Path "$env:SystemRoot\System32\Tasks" $task.TrimStart('\')
+                if (Test-Path $taskFilePath) {
+                    if (Ensure-TaskFileSystemDeny -TaskPath $task) {
+                        Write-Success "Hardened task (file-ACL deny, Schedule svc unavailable): $task"
+                    } else {
+                        Write-Warn "Could not apply file-ACL deny: $task"
+                    }
+                } else {
+                    Write-Status "Task not found (skipping): $task"
+                }
+            } else {
+                Write-Status "Task not found (skipping): $task"
+            }
             continue
         }
 
@@ -2236,11 +2307,14 @@ function Disable-UpdateTasks {
             }
 
             try {
-                $st = (Get-ScheduledTask -TaskPath $taskFolder -TaskName $taskName -ErrorAction SilentlyContinue).State
-                if ($st -eq "Disabled") {
-                    Write-Status "Verified disabled state: $task"
-                } else {
-                    Write-Warn "Task state is '$st' (expected Disabled): $task"
+                $stObj = Get-ScheduledTaskSafe -TaskPath $taskFolder -TaskName $taskName
+                if ($stObj) {
+                    $st = $stObj.State
+                    if ($st -eq "Disabled") {
+                        Write-Status "Verified disabled state: $task"
+                    } else {
+                        Write-Warn "Task state is '$st' (expected Disabled): $task"
+                    }
                 }
             } catch { }
 
@@ -2291,6 +2365,12 @@ function Disable-UpdateTasks {
         if (-not $disabled) {
             Write-Warn "Could not disable task (all methods failed): $task"
         }
+    }
+    if ($script:ScheduleSvcStarted) {
+        try {
+            Stop-Service "Schedule" -Force -ErrorAction SilentlyContinue
+            $script:ScheduleSvcStarted = $false
+        } catch {}
     }
     Write-Success "Task disable pass complete."
 }
@@ -2368,14 +2448,43 @@ function Enable-UpdateTasks {
         }
     }
 
+    if ($script:InSafeMode) {
+        $script:ScheduleSvcStarted = Start-ScheduleServiceIfNeeded
+    }
+
     foreach ($task in $UpdateTasks) {
         $lastSlash  = $task.LastIndexOf('\')
         $taskFolder = $task.Substring(0, $lastSlash + 1)
         $taskName   = $task.Substring($lastSlash + 1)
 
-        $taskObj = Get-ScheduledTask -TaskPath $taskFolder -TaskName $taskName -ErrorAction SilentlyContinue
+        $taskObj = Get-ScheduledTaskSafe -TaskPath $taskFolder -TaskName $taskName
         if (-not $taskObj) {
-            Write-Status "Task not found (skipping): $task"
+            if (-not (Test-ScheduleServiceAvailable)) {
+                $taskFilePath = Join-Path "$env:SystemRoot\System32\Tasks" $task.TrimStart('\')
+                if (Test-Path $taskFilePath) {
+                    Enable-TokenPrivilege "SeTakeOwnershipPrivilege"
+                    & takeown.exe /F $taskFilePath 2>&1 | Out-Null
+                    & icacls.exe $taskFilePath /grant "Administrators:(F)" 2>&1 | Out-Null
+                    & icacls.exe $taskFilePath /remove:d "SYSTEM" 2>&1 | Out-Null
+                    & icacls.exe $taskFilePath /remove:d "NT SERVICE\TrustedInstaller" 2>&1 | Out-Null
+                    try {
+                        $xmlContent = Get-Content -Path $taskFilePath -Raw -ErrorAction Stop
+                        if ($xmlContent -match '<Enabled>false</Enabled>') {
+                            $xmlContent = $xmlContent -replace '<Enabled>false</Enabled>', '<Enabled>true</Enabled>'
+                            Set-Content -Path $taskFilePath -Value $xmlContent -Encoding UTF8 -Force -ErrorAction Stop
+                            Write-Success "Patched task XML back to enabled (Schedule svc unavailable): $task"
+                        } else {
+                            Write-Success "Restored task file ACL (Schedule svc unavailable): $task"
+                        }
+                    } catch {
+                        Write-Warn "Could not patch task XML: $task — $_"
+                    }
+                } else {
+                    Write-Status "Task not found (skipping): $task"
+                }
+            } else {
+                Write-Status "Task not found (skipping): $task"
+            }
             continue
         }
 
@@ -2497,6 +2606,12 @@ function Enable-UpdateTasks {
         if (-not $enabled) {
             Write-Warn "Could not enable task (all methods failed): $task"
         }
+    }
+    if ($script:ScheduleSvcStarted) {
+        try {
+            Stop-Service "Schedule" -Force -ErrorAction SilentlyContinue
+            $script:ScheduleSvcStarted = $false
+        } catch {}
     }
     Write-Success "Task enable pass complete."
 }
@@ -2686,6 +2801,10 @@ function Show-CurrentStatus {
 
     Write-Status "── Scheduled tasks ─────────────────────────────────────────────────"
 
+    if ($script:InSafeMode -and -not (Test-ScheduleServiceAvailable)) {
+        Start-ScheduleServiceIfNeeded | Out-Null
+    }
+
     $StatusTasks = @(
         "\Microsoft\Windows\WindowsUpdate\Scheduled Start",
         "\Microsoft\Windows\WindowsUpdate\UpdatesDeployment",
@@ -2709,16 +2828,24 @@ function Show-CurrentStatus {
         $taskFolder = $task.Substring(0, $lastSlash + 1)
         $taskName   = $task.Substring($lastSlash + 1)
 
-        $taskObj = Get-ScheduledTask -TaskPath $taskFolder -TaskName $taskName -ErrorAction SilentlyContinue
+        $taskObj = Get-ScheduledTaskSafe -TaskPath $taskFolder -TaskName $taskName
+        $hasDenyFile = Test-TaskFileDeny -TaskPath $task
         if (-not $taskObj) {
-            Write-Host ("  {0,-55}" -f $task) -NoNewline
-            Write-Host " not found (skipped)" -ForegroundColor DarkGray
+            if ($hasDenyFile) {
+                Write-Host ("  {0,-55}" -f $task) -NoNewline
+                Write-Host " (svc unavail)" -ForegroundColor DarkGray -NoNewline
+                Write-Host "  FILE-DENY=YES" -ForegroundColor Red
+                Record-Check -IsBlocked $true
+                Record-Check -IsBlocked $true
+            } else {
+                Write-Host ("  {0,-55}" -f $task) -NoNewline
+                Write-Host " not found (skipped)" -ForegroundColor DarkGray
+            }
             continue
         }
 
-        $state       = $taskObj.State         
+        $state       = $taskObj.State
         $isDisabled  = ($state -eq 'Disabled')
-        $hasDenyFile = Test-TaskFileDeny -TaskPath $task
         $denyDesc    = if ($hasDenyFile) { "FILE-DENY=YES" } else { "FILE-DENY=NO" }
 
         $fullyBlocked = $isDisabled -and $hasDenyFile

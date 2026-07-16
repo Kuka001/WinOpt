@@ -1237,7 +1237,7 @@ function Get-TaskStateString {
         $parts      = $TaskPath -split '\\'
         $taskName   = $parts[-1]
         $folderPath = '\' + ($parts[0..($parts.Length - 2)] -join '\')
-        $t = Get-ScheduledTask -TaskPath $folderPath -TaskName $taskName -ErrorAction SilentlyContinue
+        $t = Get-ScheduledTask -TaskPath $folderPath -TaskName $taskName -ErrorAction Stop
         if ($null -eq $t) { return $null }
         switch ([int]$t.State) {
             1 { return "Disabled" }
