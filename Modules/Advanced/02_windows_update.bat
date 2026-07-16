@@ -6,8 +6,7 @@ call "%~dp0..\..\Core\init.bat"
 cls
 echo %Y%=== Обновления Windows ===%X%
 echo.
-reg query "HKLM\SYSTEM\CurrentControlSet\Control\SafeBoot\Option" >nul 2>&1
-if %errorlevel% neq 0 (
+if not defined SAFEBOOT_OPTION (
     echo %R%[!] Внимание: Этот модуль работает только в Безопасном режиме!%X%
     echo %Y%Вы запустили оптимизатор в обычном режиме Windows.%X%
     echo.
