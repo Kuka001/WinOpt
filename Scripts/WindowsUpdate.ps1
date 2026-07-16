@@ -1,4 +1,4 @@
-# ТГК: https://t.me/LowLatencyCorp, ЮТУБ: https://www.youtube.com/@LowLatencyCorp
+﻿# ТГК: https://t.me/LowLatencyCorp, ЮТУБ: https://www.youtube.com/@LowLatencyCorp
 
 param(
     [ValidateSet("Enable", "Disable")]
