@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "..\..\Core\init.bat"
+call "%~dp0..\..\Core\init.bat"
 
 cls
 echo %Y%=== Отключение рекомендаций и рекламы ===%X%
@@ -32,7 +32,7 @@ for %%V in (
     for /f "tokens=1-3 delims=," %%a in ("%%~V") do reg add "%%a" /v "%%b" /t REG_DWORD /d %%c /f >nul 2>&1
 )
 
-call "..\..\Core\helpers.bat" restart_explorer
+call "%~dp0..\..\Core\helpers.bat" restart_explorer
 echo.
 echo %G%Реклама и рекомендации отключены!%X%
 echo. & pause

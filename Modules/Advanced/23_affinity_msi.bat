@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "..\..\Core\init.bat"
+call "%~dp0..\..\Core\init.bat"
 
 cls
 echo %Y%=== Affinity и MSI Mode (Device Tweaker) ===%X%

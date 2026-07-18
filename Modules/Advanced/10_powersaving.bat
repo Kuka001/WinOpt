@@ -13,7 +13,7 @@ if %errorlevel% neq 0 (
 
 :: Подключение инициализации окружения, если файл существует
 if exist "%~dp0..\..\Core\init.bat" (
-    call "..\..\Core\init.bat"
+    call "%~dp0..\..\Core\init.bat"
 )
 
 cls
