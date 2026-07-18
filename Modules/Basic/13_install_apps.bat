@@ -1,63 +1,38 @@
 @echo off
-setlocal enabledelayedexpansion
-chcp 65001 >nul
+setlocal EnableDelayedExpansion
+call "%~dp0..\..\Core\init.bat"
 
-
-:: Установка winget (если пользователь на этом настаивает)
-echo Проверка наличия WinGet...
-winget --version >nul 2>&1
-if %errorLevel% neq 0 (
-    echo Установка Windows Package Manager WinGet...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Service -Name ClipSVC -StartupType Manual -ErrorAction SilentlyContinue; Set-Service -Name InstallService -StartupType Manual -ErrorAction SilentlyContinue; Set-Service -Name DoSvc -StartupType Manual -ErrorAction SilentlyContinue; Start-Service -Name ClipSVC, InstallService, DoSvc -ErrorAction SilentlyContinue; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; Invoke-WebRequest -Uri 'https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle' -OutFile '%TEMP%\winget.msixbundle' -ErrorAction SilentlyContinue; Add-AppxPackage -Path '%TEMP%\winget.msixbundle' -ErrorAction SilentlyContinue" >nul 2>&1
-    
-    :: Проверяем еще раз
-    winget --version >nul 2>&1
-    if !errorLevel! == 0 (
-        set "winget_installed_by_us=1"
-    ) else (
-        echo [Предупреждение] Не удалось установить WinGet. Будет использован резервный метод скачивания через curl.
-        timeout /t 3 >nul
-    )
-)
-
-:menu
+:module_menu
 cls
-echo ==========================================================
+echo %Y%==========================================================%X%
 echo                  Скачивание приложений
-echo ==========================================================
-echo 1. Google Chrome
-echo 2. Steam
-echo 3. Faceit Anti-Cheat
-echo 4. 7-Zip
-echo 5. KMPlayer
-echo 6. Honeyview
-echo 7. Cloudflare WARP (1.1.1.1)
-echo 8. AIDA64 Extreme
-echo 9. MSI Afterburner
-echo 10. Revo Uninstaller
-echo 11. NVCleanstall
-echo 12. Autoruns (Sysinternals)
-echo 13. NVIDIA Profile Inspector
+echo %Y%==========================================================%X%
+echo %G%1.%X% Google Chrome
+echo %G%2.%X% Steam
+echo %G%3.%X% Faceit Anti-Cheat
+echo %G%4.%X% 7-Zip
+echo %G%5.%X% KMPlayer
+echo %G%6.%X% Honeyview
+echo %G%7.%X% Cloudflare WARP (1.1.1.1)
+echo %G%8.%X% AIDA64 Extreme
+echo %G%9.%X% MSI Afterburner
+echo %G%10.%X% Revo Uninstaller
+echo %G%11.%X% NVCleanstall
+echo %G%12.%X% Autoruns (Sysinternals)
+echo %G%13.%X% NVIDIA Profile Inspector
 echo.
-echo A. Скачать все приложения
-echo [Enter] Назад
-echo ==========================================================
+echo %G%A.%X% Скачать все приложения
+echo %R%[Enter] Назад%X%
+echo %Y%==========================================================%X%
 set "choice="
 set /p choice="Выберите приложение для скачивания (1-13, A или Enter): "
 
-:: Если просто нажат Enter
-if not defined choice (
-    if defined winget_installed_by_us (
-        echo Удаление WinGet по запросу пользователя...
-        powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-AppxPackage *Microsoft.DesktopAppInstaller* | Remove-AppxPackage -ErrorAction SilentlyContinue" >nul 2>&1
-    )
-    exit /b
-)
+if not defined choice exit /b
 
 if /i "%choice%"=="A" (
     powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\Scripts\InstallApps.ps1" "all"
     pause
-    goto menu
+    goto module_menu
 )
 
 set "valid="
@@ -67,9 +42,9 @@ for /L %%i in (1,1,13) do (
 if defined valid (
     powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\Scripts\InstallApps.ps1" "%choice%"
     pause
-    goto menu
+    goto module_menu
 )
 
-echo Неверный выбор!
+call "%~dp0..\..\Core\helpers.bat" show_fail "Неверный выбор!"
 timeout /t 2 >nul
-goto menu
+goto module_menu

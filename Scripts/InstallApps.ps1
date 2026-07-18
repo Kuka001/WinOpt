@@ -1,5 +1,5 @@
 ﻿# =====================================================================
-# Скачивание программ: WinGet + Резервный метод (curl / WebClient)
+# Скачивание программ: curl
 # Скачивание производится в папку MyProgramsEXE рядом с Start.bat
 # =====================================================================
 
@@ -21,165 +21,21 @@ if (-not (Test-Path $targetDir)) {
 Write-Host "Целевая папка для сохранения: $targetDir" -ForegroundColor Cyan
 Write-Host "----------------------------------------" -ForegroundColor Gray
 
-# Функция проверки и принудительного запуска необходимых служб для winget
-function Enable-WingetServices {
-    $services = @("ClipSVC", "InstallService", "DoSvc")
-    foreach ($svc in $services) {
-        $s = Get-Service -Name $svc -ErrorAction SilentlyContinue
-        if ($s) {
-            if ($s.StartType -eq "Disabled") {
-                Write-Host "Включение службы $svc..." -ForegroundColor Gray
-                Set-Service -Name $svc -StartupType Manual -ErrorAction SilentlyContinue
-            }
-            if ($s.Status -ne "Running") {
-                Write-Host "Запуск службы $svc..." -ForegroundColor Gray
-                Start-Service -Name $svc -ErrorAction SilentlyContinue
-            }
-        }
-    }
-}
-
-# Функция настройки конфигурации WinGet (переключение на WinINet)
-function Configure-WingetSettings {
-    Write-Host "Настройка конфигурации WinGet (переключение на WinINet)..." -ForegroundColor Gray
-    $settingsDir = "$env:LOCALAPPDATA\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState"
-    $settingsFile = Join-Path $settingsDir "settings.json"
-    
-    try {
-        if (-not (Test-Path $settingsDir)) {
-            New-Item -Path $settingsDir -ItemType Directory -Force | Out-Null
-        }
-        
-        $settingsContent = @{
-            '$schema' = "https://aka.ms/winget-settings.schema.json"
-            network = @{
-                downloader = "wininet"
-            }
-        } | ConvertTo-Json -Depth 5
-        
-        [System.IO.File]::WriteAllText($settingsFile, $settingsContent, [System.Text.Encoding]::UTF8)
-        Write-Host "Настройки WinGet успешно обновлены (активирован WinINet)." -ForegroundColor Green
-    } catch {
-        Write-Host "Не удалось настроить конфигурацию WinGet: $_" -ForegroundColor DarkYellow
-    }
-}
-
-# Функция исправления ошибок баз данных источников WinGet (0x8a15000f) под администратором
-function Repair-Winget {
-    Write-Host "Обнаружены проблемы с базой данных источников WinGet (ошибка 0x8a15000f)." -ForegroundColor Yellow
-    Write-Host "Запуск автоматического исправления..." -ForegroundColor Yellow
-    
-    # Включаем службы перед исправлением
-    Enable-WingetServices
-
-    # 1. Попытка перерегистрации системного источника для текущего профиля (Администратор)
-    try {
-        Write-Host "Регистрация Microsoft.Winget.Source..." -ForegroundColor Gray
-        Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.Winget.Source_8wekyb3d8bbwe -ErrorAction SilentlyContinue
-    } catch {
-        Write-Host "Не удалось зарегистрировать через AppX (пропускаем)..." -ForegroundColor Gray
-    }
-
-    # 2. Сброс и принудительное обновление источников (с таймаутом 15 секунд)
-    Write-Host "Принудительный сброс источников WinGet..." -ForegroundColor Gray
-    $pReset = Start-Process "winget" -ArgumentList "source reset --force" -PassThru -NoNewWindow -ErrorAction SilentlyContinue
-    if ($pReset) {
-        $pReset.WaitForExit(15000)
-        if (-not $pReset.HasExited) {
-            $pReset.Kill()
-            Write-Host "Таймаут сброса источников." -ForegroundColor DarkYellow
-        }
-    }
-
-    Write-Host "Обновление источников..." -ForegroundColor Gray
-    $pUpdate = Start-Process "winget" -ArgumentList "source update --accept-source-agreements" -PassThru -NoNewWindow -ErrorAction SilentlyContinue
-    if ($pUpdate) {
-        $pUpdate.WaitForExit(15000)
-        if (-not $pUpdate.HasExited) {
-            $pUpdate.Kill()
-            Write-Host "Таймаут обновления источников. Вероятно, соединение блокируется провайдером." -ForegroundColor DarkYellow
-        }
-    }
-}
-
-# Функция проверки работоспособности winget и его источников
-function Test-Winget {
-    # Сначала всегда принудительно настраиваем WinINet для обхода зависаний Delivery Optimization
-    Configure-WingetSettings
-
-    $wingetExists = Get-Command "winget" -ErrorAction SilentlyContinue
-    if (-not $wingetExists) { return $false }
-    
-    # Проверка работоспособности самого исполняемого файла
-    try {
-        $p = Start-Process "winget" -ArgumentList "--version" -NoNewWindow -Wait -PassThru -ErrorAction SilentlyContinue
-        if ($p.ExitCode -ne 0) { return $false }
-    } catch {
-        return $false
-    }
-
-    # Проверка работоспособности источников (защита от зависания и ошибки 0x8a15000f с таймаутом 12 секунд)
-    Write-Host "Проверка связи с источниками WinGet (таймаут 12 сек)..." -ForegroundColor Gray
-    $pSources = Start-Process "winget" -ArgumentList "search Google.Chrome --accept-source-agreements" -NoNewWindow -PassThru -ErrorAction SilentlyContinue
-    $sourcesOK = $false
-    if ($pSources) {
-        $pSources.WaitForExit(12000)
-        if (-not $pSources.HasExited) {
-            $pSources.Kill()
-            Write-Host "Превышено время ожидания проверки связи с источниками (зависание)." -ForegroundColor DarkYellow
-        } else {
-            if ($pSources.ExitCode -eq 0) {
-                $sourcesOK = $true
-            }
-        }
-    }
-
-    if (-not $sourcesOK) {
-        # Если источники поломаны или зависли, пробуем восстановить их
-        Repair-Winget
-        
-        # Проверяем источники еще раз после исправления (таймаут 12 секунд)
-        Write-Host "Повторная проверка связи с источниками WinGet (таймаут 12 сек)..." -ForegroundColor Gray
-        $pSources = Start-Process "winget" -ArgumentList "search Google.Chrome --accept-source-agreements" -NoNewWindow -PassThru -ErrorAction SilentlyContinue
-        $sourcesOKAfterRepair = $false
-        if ($pSources) {
-            $pSources.WaitForExit(12000)
-            if (-not $pSources.HasExited) {
-                $pSources.Kill()
-            } else {
-                if ($pSources.ExitCode -eq 0) {
-                    $sourcesOKAfterRepair = $true
-                }
-            }
-        }
-
-        if (-not $sourcesOKAfterRepair) {
-            Write-Host "[Предупреждение] Источники WinGet не отвечают (блокировка сети или таймаут)." -ForegroundColor Red
-            Write-Host "Будет автоматически использован резервный метод скачивания (curl)." -ForegroundColor DarkYellow
-            return $false
-        }
-    }
-    
-    return $true
-}
-
-$IsWingetAvailable = Test-Winget
-
-# Описание приложений: [Имя, ID в WinGet, URL для curl, имя целевого файла, специальные заголовки для curl]
+# Описание приложений: [Имя, URL для curl, имя целевого файла, специальные заголовки для curl]
 $apps = @{
-    "1"  = @("Google Chrome", "Google.Chrome", "https://dl.google.com/chrome/install/ChromeStandaloneSetup64.exe", "chrome_setup.exe", "")
-    "2"  = @("Steam", "Valve.Steam", "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe", "steam_setup.exe", "")
-    "3"  = @("Faceit Anti-Cheat", "", "https://client.anti-cheat.faceit.com/FACEITAC.exe", "faceit_ac_setup.exe", "")
-    "4"  = @("7-Zip", "7zip.7zip", "https://www.7-zip.org/a/7z2409-x64.exe", "7z_setup.exe", "")
-    "5"  = @("KMPlayer", "", "https://dn.kmplayer.com/Dn/kmp64x/KMP64_2026.6.26.11.exe", "kmp_setup.exe", "")
-    "6"  = @("Honeyview", "Bandisoft.Honeyview", "https://www.bandisoft.com/honeyview/dl.php?web", "honeyview_setup.exe", "")
-    "7"  = @("Cloudflare WARP (1.1.1.1)", "Cloudflare.Warp", "https://1.1.1.1/Cloudflare_WARP_Release-x64.msi", "cloudflare_warp_setup.msi", "")
-    "8"  = @("AIDA64 Extreme", "FinalWire.AIDA64.Extreme", "https://download.aida64.com/aida64extreme730.exe", "aida64_setup.exe", "")
-    "9"  = @("MSI Afterburner", "Guru3D.Afterburner", "https://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip", "MSIAfterburnerSetup.zip", "")
-    "10" = @("Revo Uninstaller", "VSRevoGroup.RevoUninstaller", "https://download.revouninstaller.com/download/RevoUninProSetup.exe", "revo_setup.exe", "")
-    "11" = @("NVCleanstall", "TechPowerUp.NVCleanstall", "majorgeeks", "NVCleanstall_setup.exe", "")
-    "12" = @("Autoruns (Sysinternals)", "Microsoft.Sysinternals.Autoruns", "https://download.sysinternals.com/files/Autoruns.zip", "Autoruns.zip", "")
-    "13" = @("NVIDIA Profile Inspector", "Orbmu2k.nvidiaProfileInspector", "https://github.com/Orbmu2k/nvidiaProfileInspector/releases/latest/download/nvidiaProfileInspector.zip", "nvidiaProfileInspector.zip", "")
+    "1"  = @("Google Chrome", "https://dl.google.com/chrome/install/ChromeStandaloneSetup64.exe", "chrome_setup.exe", "")
+    "2"  = @("Steam", "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe", "steam_setup.exe", "")
+    "3"  = @("Faceit Anti-Cheat", "https://client.anti-cheat.faceit.com/FACEITAC.exe", "faceit_ac_setup.exe", "")
+    "4"  = @("7-Zip", "https://www.7-zip.org/a/7z2409-x64.exe", "7z_setup.exe", "")
+    "5"  = @("KMPlayer", "https://dn.kmplayer.com/Dn/kmp64x/KMP64_2026.6.26.11.exe", "kmp_setup.exe", "")
+    "6"  = @("Honeyview", "https://www.bandisoft.com/honeyview/dl.php?web", "honeyview_setup.exe", "")
+    "7"  = @("Cloudflare WARP (1.1.1.1)", "https://1111-releases.cloudflareclient.com/windows/Cloudflare_WARP_Release-x64.msi", "cloudflare_warp_setup.msi", "")
+    "8"  = @("AIDA64 Extreme", "https://download.aida64.com/aida64extreme730.exe", "aida64_setup.exe", "")
+    "9"  = @("MSI Afterburner", "guru3d", "MSIAfterburnerSetup.zip", "")
+    "10" = @("Revo Uninstaller", "https://download.revouninstaller.com/download/RevoUninProSetup.exe", "revo_setup.exe", "")
+    "11" = @("NVCleanstall", "techpowerup", "NVCleanstall_setup.exe", "")
+    "12" = @("Autoruns (Sysinternals)", "https://download.sysinternals.com/files/Autoruns.zip", "Autoruns.zip", "")
+    "13" = @("NVIDIA Profile Inspector", "https://github.com/Orbmu2k/nvidiaProfileInspector/releases/latest/download/nvidiaProfileInspector.zip", "nvidiaProfileInspector.zip", "")
 }
 
 # Функция скачивания через curl
@@ -194,11 +50,11 @@ function Download-Curl {
     $destPath = Join-Path $targetDir $FileName
     if (Test-Path $destPath) { Remove-Item $destPath -Force -ErrorAction SilentlyContinue | Out-Null }
     
-    if ($Url -eq "majorgeeks") {
-        Write-Host "Парсинг зеркала MajorGeeks для $Name..." -ForegroundColor Gray
+    if ($Url -eq "guru3d") {
+        Write-Host "Парсинг Guru3D для $Name..." -ForegroundColor Gray
         $pStart = New-Object System.Diagnostics.ProcessStartInfo
         $pStart.FileName = "curl.exe"
-        $pStart.Arguments = "-s -L -k -A `"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36`" `"https://www.majorgeeks.com/mg/getmirror/nvcleanstall,1.html`""
+        $pStart.Arguments = "-s -L -A `"Mozilla/5.0`" `"https://www.guru3d.com/download/msi-afterburner-beta-download/`""
         $pStart.UseShellExecute = $false
         $pStart.RedirectStandardOutput = $true
         $pStart.CreateNoWindow = $true
@@ -206,23 +62,70 @@ function Download-Curl {
         $html = $proc.StandardOutput.ReadToEnd()
         $proc.WaitForExit()
 
-        $matchLink = [regex]::Match($html, 'href="(https://files\d*\.majorgeeks\.com/[^"]+NVCleanstall[^"]*\.exe)"')
-        if (-not $matchLink.Success) {
-            $matchLink = [regex]::Match($html, 'href="(https://[^"]+NVCleanstall[^"]*\.exe)"')
+        $match = [regex]::Match($html, 'name="aform".*?value="([a-f0-9]+)"')
+        if ($match.Success) {
+            $val = $match.Groups[1].Value
+            $pStart.Arguments = "-s -i -A `"Mozilla/5.0`" -d `"aform=$val`" `"https://www.guru3d.com/download/msi-afterburner-beta-download/mirrors`""
+            $proc = [System.Diagnostics.Process]::Start($pStart)
+            $headers = $proc.StandardOutput.ReadToEnd()
+            $proc.WaitForExit()
+            
+            $locMatch = [regex]::Match($headers, 'href="(https://www.guru3d.com/getdownload/[a-f0-9]+)"')
+            if ($locMatch.Success) {
+                $downloadUrl = $locMatch.Groups[1].Value.Trim()
+                $pStart.Arguments = "-s -i -A `"Mozilla/5.0`" `"$downloadUrl`""
+                $proc = [System.Diagnostics.Process]::Start($pStart)
+                $finalHeaders = $proc.StandardOutput.ReadToEnd()
+                $proc.WaitForExit()
+                
+                $finalLocMatch = [regex]::Match($finalHeaders, '(?i)location:\s*(.+)')
+                if ($finalLocMatch.Success) {
+                    $Url = $finalLocMatch.Groups[1].Value.Trim()
+                }
+            }
         }
-        if ($matchLink.Success) {
-            $Url = $matchLink.Groups[1].Value
-            $ExtraArgs = "-A `"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36`" -H `"Referer: https://www.majorgeeks.com/`""
-        } else {
-            Write-Host "Не удалось распарсить ссылку MajorGeeks. Используем TechPowerUp напрямую..." -ForegroundColor DarkYellow
-            $Url = "https://www.techpowerup.com/download/techpowerup-nvcleanstall/"
-            $ExtraArgs = "-A `"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36`""
+        if ($Url -eq "guru3d") {
+            Write-Host "Не удалось распарсить ссылку Guru3D." -ForegroundColor Red
+            return $false
         }
+        $ExtraArgs = "-A `"Mozilla/5.0`""
     }
     
-    Write-Host ">>> Скачивание: $Name (резервный метод)..." -ForegroundColor Yellow
+    if ($Url -eq "techpowerup") {
+        Write-Host "Парсинг TechPowerUp для $Name..." -ForegroundColor Gray
+        $pStart = New-Object System.Diagnostics.ProcessStartInfo
+        $pStart.FileName = "curl.exe"
+        $pStart.Arguments = "-s -L -A `"Mozilla/5.0`" `"https://www.techpowerup.com/download/techpowerup-nvcleanstall/`""
+        $pStart.UseShellExecute = $false
+        $pStart.RedirectStandardOutput = $true
+        $pStart.CreateNoWindow = $true
+        $proc = [System.Diagnostics.Process]::Start($pStart)
+        $html = $proc.StandardOutput.ReadToEnd()
+        $proc.WaitForExit()
 
-    $curlArgs = "-L -k --retry 3 --retry-delay 2 -o `"$destPath`" `"$Url`""
+        $match = [regex]::Match($html, '<input type="hidden" name="id" value="(\d+)" />')
+        if ($match.Success) {
+            $id = $match.Groups[1].Value
+            $pStart.Arguments = "-s -i -A `"Mozilla/5.0`" -d `"id=$id&server_id=19`" `"https://www.techpowerup.com/download/techpowerup-nvcleanstall/`""
+            $proc = [System.Diagnostics.Process]::Start($pStart)
+            $headers = $proc.StandardOutput.ReadToEnd()
+            $proc.WaitForExit()
+            
+            $locMatch = [regex]::Match($headers, '(?i)location:\s*(.+)')
+            if ($locMatch.Success) {
+                $Url = $locMatch.Groups[1].Value.Trim()
+            }
+        }
+        if ($Url -eq "techpowerup") {
+            Write-Host "Не удалось распарсить ссылку TechPowerUp." -ForegroundColor Red
+            return $false
+        }
+        $ExtraArgs = "-A `"Mozilla/5.0`""
+    }
+    
+    Write-Host ">>> Скачивание: $Name..." -ForegroundColor Yellow
+
+    $curlArgs = "-L -k -g --retry 3 --retry-delay 2 -o `"$destPath`" `"$Url`""
     if ($ExtraArgs) {
         $curlArgs = "$ExtraArgs $curlArgs"
     } else {
@@ -257,63 +160,6 @@ function Download-Curl {
         }
         return $false
     }
-}
-
-
-# Функция скачивания через winget
-function Download-Winget {
-    param(
-        [string]$Name,
-        [string]$WingetId,
-        [string]$FileName
-    )
-
-    if (-not $IsWingetAvailable -or -not $WingetId) {
-        return $false
-    }
-
-    # Убедимся, что необходимые службы включены и запущены перед работой winget
-    Enable-WingetServices
-
-    Write-Host ">>> Скачивание: $Name (через winget)..." -ForegroundColor Yellow
-
-    $tempDir = Join-Path $env:TEMP "Winget_$($WingetId -replace '[^a-zA-Z0-9]','_')"
-    if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force -ErrorAction SilentlyContinue | Out-Null }
-    New-Item -Path $tempDir -ItemType Directory | Out-Null
-
-    $p = Start-Process "winget" -ArgumentList "download --id $WingetId -d `"$tempDir`" --accept-source-agreements --accept-package-agreements" -Wait -PassThru -NoNewWindow -ErrorAction SilentlyContinue
-
-    # Попытка восстановления, если winget завершился с ошибкой (например, 0x8a15000f)
-    if ($p.ExitCode -ne 0) {
-        Write-Host "Предупреждение: скачивание через winget не удалось (код $($p.ExitCode)). Пробуем сбросить и обновить источники..." -ForegroundColor Yellow
-        $null = Start-Process "winget" -ArgumentList "source reset --force" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
-        $null = Start-Process "winget" -ArgumentList "source update" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
-        
-        # Вторая попытка скачать после сброса источников
-        Write-Host "Повторная попытка скачивания через winget..." -ForegroundColor Yellow
-        if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force -ErrorAction SilentlyContinue | Out-Null }
-        New-Item -Path $tempDir -ItemType Directory | Out-Null
-        $p = Start-Process "winget" -ArgumentList "download --id $WingetId -d `"$tempDir`" --accept-source-agreements --accept-package-agreements" -Wait -PassThru -NoNewWindow -ErrorAction SilentlyContinue
-    }
-
-    $success = $false
-    if ($p.ExitCode -eq 0) {
-        $installer = Get-ChildItem -Path $tempDir -File -Recurse | Where-Object { $_.Extension -in ".exe", ".msi", ".zip", ".msix", ".msixbundle" } | Select-Object -First 1
-        if ($installer) {
-            $destPath = Join-Path $targetDir $FileName
-            if (Test-Path $destPath) { Remove-Item $destPath -Force -ErrorAction SilentlyContinue | Out-Null }
-            Move-Item -Path $installer.FullName -Destination $destPath -Force | Out-Null
-            Write-Host "Файл успешно скачан: $FileName" -ForegroundColor Green
-            $success = $true
-        } else {
-            Write-Host "Установщик не найден в скачанном пакете." -ForegroundColor Red
-        }
-    } else {
-        Write-Host "winget download не удался (код: $($p.ExitCode)), переход к резервному методу..." -ForegroundColor DarkYellow
-    }
-
-    if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force -ErrorAction SilentlyContinue | Out-Null }
-    return $success
 }
 
 # Функция обработки архивов
@@ -384,12 +230,11 @@ function Execute-Download {
 
     $appInfo = $apps[$id]
     $name = $appInfo[0]
-    $wingetId = $appInfo[1]
-    $url = $appInfo[2]
-    $fileName = $appInfo[3]
-    $extraArgs = $appInfo[4]
+    $url = $appInfo[1]
+    $fileName = $appInfo[2]
+    $extraArgs = $appInfo[3]
 
-    # Faceit Anti-Cheat: скачиваем напрямую с CDN (winget не работает от админа из-за hash override)
+    # Faceit Anti-Cheat: скачиваем напрямую с CDN
     if ($id -eq "3") {
         $faceitCdnUrl = "https://anticheat-client.faceit-cdn.net/FACEITInstaller_64.exe"
         $done = Download-Curl -Name $name -Url $faceitCdnUrl -FileName $fileName -ExtraArgs $extraArgs
@@ -399,15 +244,9 @@ function Execute-Download {
         return
     }
 
-    # 1. Пробуем скачать через winget download
-    $done = Download-Winget -Name $name -WingetId $wingetId -FileName $fileName
+    $done = Download-Curl -Name $name -Url $url -FileName $fileName -ExtraArgs $extraArgs
 
-    # 2. Если winget не сработал или недоступен, качаем через curl
-    if (-not $done) {
-        $done = Download-Curl -Name $name -Url $url -FileName $fileName -ExtraArgs $extraArgs
-    }
-
-    # 3. Если скачан архив, распаковываем его
+    # Если скачан архив, распаковываем его
     if ($done -and $fileName.EndsWith(".zip")) {
         Handle-Zip -Name $name -ZipPath (Join-Path $targetDir $fileName)
     }
@@ -423,7 +262,3 @@ if ($AppId -eq "all") {
 } else {
     Execute-Download -id $AppId
 }
-
-Write-Host ""
-Write-Host "Нажмите любую клавишу для продолжения..."
-$null = [Console]::ReadKey($true)
