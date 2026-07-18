@@ -56,6 +56,7 @@ if not defined choice (
 
 if /i "%choice%"=="A" (
     powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\Scripts\InstallApps.ps1" "all"
+    pause
     goto menu
 )
 
@@ -65,6 +66,7 @@ for /L %%i in (1,1,13) do (
 )
 if defined valid (
     powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\Scripts\InstallApps.ps1" "%choice%"
+    pause
     goto menu
 )
 

@@ -1,4 +1,4 @@
-param([string]$NpiPath)
+﻿param([string]$NpiPath)
 
 $profileXml = @'
 <?xml version="1.0" encoding="utf-16"?>

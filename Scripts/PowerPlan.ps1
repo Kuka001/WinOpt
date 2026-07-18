@@ -1,15 +1,15 @@
-$isAdmin = (New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-if(!$isAdmin){Write-Host "Запустите от Администратора!" -ForegroundColor Red;Pause;exit}
+п»ї$isAdmin = (New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if(!$isAdmin){Write-Host "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!" -ForegroundColor Red;Pause;exit}
 
-Write-Host "Настройка схемы электропитания CS2_Optimized..." -ForegroundColor Cyan
+Write-Host "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ CS2_Optimized..." -ForegroundColor Cyan
 
 $P = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"
 powercfg -restoredefaultschemes *>$null
-powercfg -changename $P "CS2_Optimized" "Максимальная производительность"
+powercfg -changename $P "CS2_Optimized" "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 
 function A($s,$t,$a,$d){powercfg -setacvalueindex $P $s $t $a;powercfg -setdcvalueindex $P $s $t $d}
 
-Write-Host "Применение параметров..." -ForegroundColor Yellow
+Write-Host "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ..." -ForegroundColor Yellow
 
 $s="fea3413e-7e05-4911-9a71-700331f1c294"
 A $s 0e796bdb-100d-47d6-a2d5-f7d2daa51f51 0 0;A $s 245d8541-3943-4422-b025-13a784f679b7 1 1;A $s 4faab71a-92e5-4726-b531-224559672d19 0 0;A $s 68afb2d9-ee95-47a8-8f50-4115088073b1 0 0;A $s f15576e8-98b7-4186-b944-eafa664402d9 1 1
@@ -118,10 +118,10 @@ foreach($g in @("5dbb7c9f-38e9-40d2-9749-4f8a0e9f640f","637ea02f-bbcb-4015-8e2c-
 A "f693fb01-e858-4f00-b20f-f30e12ac06d6" 191f65b5-d45c-4a4f-8aae-1ab8bfd980e6 1 1
 
 powercfg -setactive $P
-Write-Host "Удаление других планов..." -ForegroundColor Yellow
+Write-Host "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ..." -ForegroundColor Yellow
 foreach($line in (powercfg -list)){
     if($line -match "([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})"){
         if($matches[1] -ne $P){powercfg -delete $matches[1] *>$null}
     }
 }
-Write-Host "ГОТОВО! CS2_Optimized активирована." -ForegroundColor Green
+Write-Host "пїЅпїЅпїЅпїЅпїЅпїЅ! CS2_Optimized пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ." -ForegroundColor Green
