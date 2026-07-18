@@ -55,11 +55,26 @@ function Repair-Winget {
         Write-Host "Не удалось зарегистрировать через AppX (пропускаем)..." -ForegroundColor Gray
     }
 
-    # 2. Сброс и принудительное обновление источников
+    # 2. Сброс и принудительное обновление источников (с таймаутом 15 секунд)
     Write-Host "Принудительный сброс источников WinGet..." -ForegroundColor Gray
-    $null = Start-Process "winget" -ArgumentList "source reset --force" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+    $pReset = Start-Process "winget" -ArgumentList "source reset --force" -PassThru -NoNewWindow -ErrorAction SilentlyContinue
+    if ($pReset) {
+        $pReset.WaitForExit(15000)
+        if (-not $pReset.HasExited) {
+            $pReset.Kill()
+            Write-Host "Таймаут сброса источников." -ForegroundColor DarkYellow
+        }
+    }
+
     Write-Host "Обновление источников..." -ForegroundColor Gray
-    $null = Start-Process "winget" -ArgumentList "source update" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+    $pUpdate = Start-Process "winget" -ArgumentList "source update" -PassThru -NoNewWindow -ErrorAction SilentlyContinue
+    if ($pUpdate) {
+        $pUpdate.WaitForExit(15000)
+        if (-not $pUpdate.HasExited) {
+            $pUpdate.Kill()
+            Write-Host "Таймаут обновления источников. Вероятно, соединение блокируется провайдером." -ForegroundColor DarkYellow
+        }
+    }
 }
 
 # Функция проверки работоспособности winget и его источников
@@ -75,18 +90,44 @@ function Test-Winget {
         return $false
     }
 
-    # Проверка работоспособности источников (защита от ошибки 0x8a15000f)
-    Write-Host "Проверка связи с источниками WinGet..." -ForegroundColor Gray
-    $pSources = Start-Process "winget" -ArgumentList "search Google.Chrome --accept-source-agreements" -NoNewWindow -Wait -PassThru -ErrorAction SilentlyContinue
-    if ($pSources.ExitCode -ne 0) {
-        # Если источники поломаны, пробуем восстановить их
+    # Проверка работоспособности источников (защита от зависания и ошибки 0x8a15000f с таймаутом 12 секунд)
+    Write-Host "Проверка связи с источниками WinGet (таймаут 12 сек)..." -ForegroundColor Gray
+    $pSources = Start-Process "winget" -ArgumentList "search Google.Chrome --accept-source-agreements" -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+    $sourcesOK = $false
+    if ($pSources) {
+        $pSources.WaitForExit(12000)
+        if (-not $pSources.HasExited) {
+            $pSources.Kill()
+            Write-Host "Превышено время ожидания проверки связи с источниками (зависание)." -ForegroundColor DarkYellow
+        } else {
+            if ($pSources.ExitCode -eq 0) {
+                $sourcesOK = $true
+            }
+        }
+    }
+
+    if (-not $sourcesOK) {
+        # Если источники поломаны или зависли, пробуем восстановить их
         Repair-Winget
         
-        # Проверяем источники еще раз после исправления
-        $pSources = Start-Process "winget" -ArgumentList "search Google.Chrome --accept-source-agreements" -NoNewWindow -Wait -PassThru -ErrorAction SilentlyContinue
-        if ($pSources.ExitCode -ne 0) {
-            Write-Host "[Предупреждение] Источники WinGet не удалось восстановить автоматически." -ForegroundColor Red
-            Write-Host "Будет использован резервный метод скачивания (curl)." -ForegroundColor DarkYellow
+        # Проверяем источники еще раз после исправления (таймаут 12 секунд)
+        Write-Host "Повторная проверка связи с источниками WinGet (таймаут 12 сек)..." -ForegroundColor Gray
+        $pSources = Start-Process "winget" -ArgumentList "search Google.Chrome --accept-source-agreements" -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+        $sourcesOKAfterRepair = $false
+        if ($pSources) {
+            $pSources.WaitForExit(12000)
+            if (-not $pSources.HasExited) {
+                $pSources.Kill()
+            } else {
+                if ($pSources.ExitCode -eq 0) {
+                    $sourcesOKAfterRepair = $true
+                }
+            }
+        }
+
+        if (-not $sourcesOKAfterRepair) {
+            Write-Host "[Предупреждение] Источники WinGet не отвечают (блокировка сети или таймаут)." -ForegroundColor Red
+            Write-Host "Будет автоматически использован резервный метод скачивания (curl)." -ForegroundColor DarkYellow
             return $false
         }
     }
