@@ -1,4 +1,4 @@
-﻿# =====================================================================
+# =====================================================================
 # Скачивание программ: WinGet + Резервный метод (curl / WebClient)
 # Скачивание производится в папку MyProgramsEXE рядом с Start.bat
 # =====================================================================
@@ -21,18 +21,77 @@ if (-not (Test-Path $targetDir)) {
 Write-Host "Целевая папка для сохранения: $targetDir" -ForegroundColor Cyan
 Write-Host "----------------------------------------" -ForegroundColor Gray
 
-# Функция проверки работоспособности winget
+# Функция проверки и принудительного запуска необходимых служб для winget
+function Enable-WingetServices {
+    $services = @("ClipSVC", "InstallService", "DoSvc")
+    foreach ($svc in $services) {
+        $s = Get-Service -Name $svc -ErrorAction SilentlyContinue
+        if ($s) {
+            if ($s.StartType -eq "Disabled") {
+                Write-Host "Включение службы $svc..." -ForegroundColor Gray
+                Set-Service -Name $svc -StartupType Manual -ErrorAction SilentlyContinue
+            }
+            if ($s.Status -ne "Running") {
+                Write-Host "Запуск службы $svc..." -ForegroundColor Gray
+                Start-Service -Name $svc -ErrorAction SilentlyContinue
+            }
+        }
+    }
+}
+
+# Функция исправления ошибок баз данных источников WinGet (0x8a15000f) под администратором
+function Repair-Winget {
+    Write-Host "Обнаружены проблемы с базой данных источников WinGet (ошибка 0x8a15000f)." -ForegroundColor Yellow
+    Write-Host "Запуск автоматического исправления..." -ForegroundColor Yellow
+    
+    # Включаем службы перед исправлением
+    Enable-WingetServices
+
+    # 1. Попытка перерегистрации системного источника для текущего профиля (Администратор)
+    try {
+        Write-Host "Регистрация Microsoft.Winget.Source..." -ForegroundColor Gray
+        Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.Winget.Source_8wekyb3d8bbwe -ErrorAction SilentlyContinue
+    } catch {
+        Write-Host "Не удалось зарегистрировать через AppX (пропускаем)..." -ForegroundColor Gray
+    }
+
+    # 2. Сброс и принудительное обновление источников
+    Write-Host "Принудительный сброс источников WinGet..." -ForegroundColor Gray
+    $null = Start-Process "winget" -ArgumentList "source reset --force" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+    Write-Host "Обновление источников..." -ForegroundColor Gray
+    $null = Start-Process "winget" -ArgumentList "source update" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+}
+
+# Функция проверки работоспособности winget и его источников
 function Test-Winget {
     $wingetExists = Get-Command "winget" -ErrorAction SilentlyContinue
     if (-not $wingetExists) { return $false }
     
-    # Иногда команда есть, но при вызове падает ошибка. Сделаем тестовый запуск.
+    # Проверка работоспособности самого исполняемого файла
     try {
-        $null = Start-Process "winget" -ArgumentList "--version" -NoNewWindow -Wait -PassThru -ErrorAction SilentlyContinue
-        return $true
+        $p = Start-Process "winget" -ArgumentList "--version" -NoNewWindow -Wait -PassThru -ErrorAction SilentlyContinue
+        if ($p.ExitCode -ne 0) { return $false }
     } catch {
         return $false
     }
+
+    # Проверка работоспособности источников (защита от ошибки 0x8a15000f)
+    Write-Host "Проверка связи с источниками WinGet..." -ForegroundColor Gray
+    $pSources = Start-Process "winget" -ArgumentList "search Google.Chrome --accept-source-agreements" -NoNewWindow -Wait -PassThru -ErrorAction SilentlyContinue
+    if ($pSources.ExitCode -ne 0) {
+        # Если источники поломаны, пробуем восстановить их
+        Repair-Winget
+        
+        # Проверяем источники еще раз после исправления
+        $pSources = Start-Process "winget" -ArgumentList "search Google.Chrome --accept-source-agreements" -NoNewWindow -Wait -PassThru -ErrorAction SilentlyContinue
+        if ($pSources.ExitCode -ne 0) {
+            Write-Host "[Предупреждение] Источники WinGet не удалось восстановить автоматически." -ForegroundColor Red
+            Write-Host "Будет использован резервный метод скачивания (curl)." -ForegroundColor DarkYellow
+            return $false
+        }
+    }
+    
+    return $true
 }
 
 $IsWingetAvailable = Test-Winget
@@ -131,23 +190,6 @@ function Download-Curl {
     }
 }
 
-# Функция проверки и принудительного запуска необходимых служб для winget
-function Enable-WingetServices {
-    $services = @("ClipSVC", "InstallService", "DoSvc")
-    foreach ($svc in $services) {
-        $s = Get-Service -Name $svc -ErrorAction SilentlyContinue
-        if ($s) {
-            if ($s.StartType -eq "Disabled") {
-                Write-Host "Включение службы $svc..." -ForegroundColor Gray
-                Set-Service -Name $svc -StartupType Manual -ErrorAction SilentlyContinue
-            }
-            if ($s.Status -ne "Running") {
-                Write-Host "Запуск службы $svc..." -ForegroundColor Gray
-                Start-Service -Name $svc -ErrorAction SilentlyContinue
-            }
-        }
-    }
-}
 
 # Функция скачивания через winget
 function Download-Winget {
