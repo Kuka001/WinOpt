@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 :uac_menu
 cls
@@ -30,7 +30,7 @@ if "%c%"=="1" (
     if !errorlevel! equ 0 (
         echo %G%Готово!%X%
         echo %R%Требуется перезагрузка. UWP-приложения могут не работать!%X%
-    ) else (call "%~dp0..\..\Core\helpers.bat" show_fail)
+    ) else (call "..\..\Core\helpers.bat" show_fail)
     echo. & pause & goto uac_menu
 )
 if "%c%"=="2" (
@@ -49,7 +49,7 @@ if "%c%"=="2" (
     reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3" /v 1806 /t REG_DWORD /d 0 /f >nul 2>&1
     reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3" /v 1806 /t REG_DWORD /d 0 /f >nul 2>&1
 
-    if !errorlevel! equ 0 (call "%~dp0..\..\Core\helpers.bat" show_ok) else (call "%~dp0..\..\Core\helpers.bat" show_fail)
+    if !errorlevel! equ 0 (call "..\..\Core\helpers.bat" show_ok) else (call "..\..\Core\helpers.bat" show_fail)
     echo. & pause & goto uac_menu
 )
 if "%c%"=="0" (
@@ -72,7 +72,7 @@ if "%c%"=="0" (
     if !errorlevel! equ 0 (
         echo %G%UAC полностью восстановлен.%X%
         echo %R%Перезагрузите ПК.%X%
-    ) else (call "%~dp0..\..\Core\helpers.bat" show_fail)
+    ) else (call "..\..\Core\helpers.bat" show_fail)
     echo. & pause & goto uac_menu
 )
 goto uac_menu

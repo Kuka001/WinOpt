@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 :disable_notifications
 cls
@@ -47,7 +47,7 @@ reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\SystemSettings\AccountNo
 echo %Y%[4/4] Включение WpnUserService для буфера обмена...%X%
 reg add "HKLM\SYSTEM\CurrentControlSet\Services\WpnUserService" /v Start /t REG_DWORD /d 2 /f >nul 2>&1
 
-call "%~dp0..\..\Core\helpers.bat" restart_explorer
+call "..\..\Core\helpers.bat" restart_explorer
 echo.
 echo %G%Все уведомления отключены.%X%
 echo %Y%Перезагрузите ПК для полного применения.%X%
@@ -83,7 +83,7 @@ reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Setting
 reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.BackupReminder" /v "Enabled" /f >nul 2>&1
 reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\SystemSettings\AccountNotifications" /v "EnableAccountNotifications" /f >nul 2>&1
 
-call "%~dp0..\..\Core\helpers.bat" restart_explorer
+call "..\..\Core\helpers.bat" restart_explorer
 echo.
 echo %G%Уведомления восстановлены.%X%
 echo %Y%Перезагрузите ПК.%X%

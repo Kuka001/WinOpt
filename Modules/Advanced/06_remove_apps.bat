@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 cls
 echo %Y%=== Удаление ненужных приложений ===%X%
@@ -24,10 +24,10 @@ set "_err=%errorlevel%"
 
 echo.
 if !_err! equ 0 (
-    call "%~dp0..\..\Core\helpers.bat" show_ok
+    call "..\..\Core\helpers.bat" show_ok
     echo %R%Для применения изменений требуется перезагрузка компьютера.%X%
 ) else (
-    call "%~dp0..\..\Core\helpers.bat" show_fail
+    call "..\..\Core\helpers.bat" show_fail
 )
 
 echo. & pause

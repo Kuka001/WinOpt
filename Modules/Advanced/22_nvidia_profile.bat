@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 for %%i in ("%~dp0..\..") do set "ROOT_DIR=%%~fi"
 set "NPI_PATH=%ROOT_DIR%\MyProgramsEXE\NvidiaProfileInspector\nvidiaProfileInspector.exe"

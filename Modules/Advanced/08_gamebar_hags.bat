@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 cls
 echo %Y%=== Настройка GameBar, Игрового режима и HAGS ===%X%

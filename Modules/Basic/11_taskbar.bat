@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 cls
 echo %Y%Настройка панели задач...%X%
@@ -9,5 +9,5 @@ reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v "SearchboxTas
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "ShowTaskViewButton" /t REG_DWORD /d 0 /f >nul 2>&1 || set "_err=1"
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "TaskbarDa" /t REG_DWORD /d 0 /f >nul 2>&1 || set "_err=1"
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer" /v "EnableAutoTray" /t REG_DWORD /d 0 /f >nul 2>&1 || set "_err=1"
-call "%~dp0..\..\Core\helpers.bat" apply_and_restart
+call "..\..\Core\helpers.bat" apply_and_restart
 exit /b

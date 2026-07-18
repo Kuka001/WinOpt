@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 :: Проверка прав Администратора через реестр (не зависит от работы сетевых служб)
 reg query "HKU\S-1-5-19" >nul 2>&1

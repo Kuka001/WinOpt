@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 cls
 echo %Y%=== Быстродействие Windows ===%X%
@@ -27,7 +27,7 @@ reg add "HKCU\Control Panel\Keyboard" /v "KeyboardSpeed" /t REG_SZ /d "31" /f >n
 :: 6. Принудительное сохранение сглаживания экранных шрифтов для комфортного чтения
 reg add "HKCU\Control Panel\Desktop" /v "FontSmoothing" /t REG_SZ /d "2" /f >nul 2>&1
 
-call "%~dp0..\..\Core\helpers.bat" restart_explorer
+call "..\..\Core\helpers.bat" restart_explorer
 echo %G%Быстродействие настроено!%X%
 echo %Y%Внимание: Для полного применения изменений (особенно настроек DWM/MPO) перезагрузите ПК.%X%
 echo. & pause

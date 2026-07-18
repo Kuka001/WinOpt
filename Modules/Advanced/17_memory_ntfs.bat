@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-call "%~dp0..\..\Core\init.bat"
+call "..\..\Core\init.bat"
 
 :: Надежная проверка прав администратора (не зависит от состояния сетевых служб)
 fltmc >nul 2>&1

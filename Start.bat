@@ -9,12 +9,14 @@ cd /d "%~dp0"
 fsutil dirty query %systemdrive% >nul 2>&1
 if %errorLevel% equ 0 goto :skip_admin
 echo Запрос прав Администратора...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe '/k \"%~f0\"' -Verb RunAs"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe -ArgumentList '/k Start.bat' -WorkingDirectory '%~dp0' -Verb RunAs"
 exit /b
 :skip_admin
 
 :: Подгружаем ядро
-call "%~dp0Core\init.bat"
+pushd "%~dp0Core"
+call init.bat
+popd
 
 :: ==========================================
 :main_menu
@@ -51,19 +53,19 @@ echo 13. Скачивание приложений
 echo.
 set "c=" & set /p c="Выбор (Enter=назад): "
 if "%c%"=="" goto main_menu
-if "%c%"=="1" call "%~dp0Modules\Basic\01_activation.bat"
-if "%c%"=="2" call "%~dp0Modules\Basic\02_uac.bat"
-if "%c%"=="3" call "%~dp0Modules\Basic\03_bitlocker.bat"
-if "%c%"=="4" call "%~dp0Modules\Basic\04_time_sync.bat"
-if "%c%"=="5" call "%~dp0Modules\Basic\05_language.bat"
-if "%c%"=="6" call "%~dp0Modules\Basic\06_clipboard.bat"
-if "%c%"=="7" call "%~dp0Modules\Basic\07_notifications.bat"
-if "%c%"=="8" call "%~dp0Modules\Basic\08_dark_theme.bat"
-if "%c%"=="9" call "%~dp0Modules\Basic\09_hidden_files.bat"
-if "%c%"=="10" call "%~dp0Modules\Basic\10_context_menu.bat"
-if "%c%"=="11" call "%~dp0Modules\Basic\11_taskbar.bat"
-if "%c%"=="12" call "%~dp0Modules\Basic\12_explorer.bat"
-if "%c%"=="13" call "%~dp0Modules\Basic\13_install_apps.bat"
+if "%c%"=="1" call "Modules\Basic\01_activation.bat"
+if "%c%"=="2" call "Modules\Basic\02_uac.bat"
+if "%c%"=="3" call "Modules\Basic\03_bitlocker.bat"
+if "%c%"=="4" call "Modules\Basic\04_time_sync.bat"
+if "%c%"=="5" call "Modules\Basic\05_language.bat"
+if "%c%"=="6" call "Modules\Basic\06_clipboard.bat"
+if "%c%"=="7" call "Modules\Basic\07_notifications.bat"
+if "%c%"=="8" call "Modules\Basic\08_dark_theme.bat"
+if "%c%"=="9" call "Modules\Basic\09_hidden_files.bat"
+if "%c%"=="10" call "Modules\Basic\10_context_menu.bat"
+if "%c%"=="11" call "Modules\Basic\11_taskbar.bat"
+if "%c%"=="12" call "Modules\Basic\12_explorer.bat"
+if "%c%"=="13" call "Modules\Basic\13_install_apps.bat"
 goto basic_settings
 
 :: ==========================================
@@ -103,27 +105,27 @@ echo 23. Настройка Steam
 echo.
 set "c=" & set /p c="Выбор (Enter=назад): "
 if "%c%"=="" goto main_menu
-if "%c%"=="1" call "%~dp0Modules\Advanced\01_defender.bat"
-if "%c%"=="2" call "%~dp0Modules\Advanced\02_windows_update.bat"
-if "%c%"=="3" call "%~dp0Modules\Advanced\03_telemetry.bat"
-if "%c%"=="4" call "%~dp0Modules\Advanced\04_recommendations.bat"
-if "%c%"=="5" call "%~dp0Modules\Advanced\05_services.bat"
-if "%c%"=="6" call "%~dp0Modules\Advanced\06_remove_apps.bat"
-if "%c%"=="7" call "%~dp0Modules\Advanced\07_power_plan.bat"
-if "%c%"=="8" call "%~dp0Modules\Advanced\08_gamebar_hags.bat"
-if "%c%"=="9" call "%~dp0Modules\Advanced\09_network.bat"
-if "%c%"=="10" call "%~dp0Modules\Advanced\10_powersaving.bat"
-if "%c%"=="11" call "%~dp0Modules\Advanced\11_timer.bat"
-if "%c%"=="12" call "%~dp0Modules\Advanced\12_mmcss.bat"
-if "%c%"=="13" call "%~dp0Modules\Advanced\13_fse.bat"
-if "%c%"=="14" call "%~dp0Modules\Advanced\14_win32priority.bat"
-if "%c%"=="15" call "%~dp0Modules\Advanced\15_performance.bat"
-if "%c%"=="16" call "%~dp0Modules\Advanced\16_vbs.bat"
-if "%c%"=="17" call "%~dp0Modules\Advanced\17_memory_ntfs.bat"
-if "%c%"=="18" call "%~dp0Modules\Advanced\18_mouse.bat"
-if "%c%"=="19" call "%~dp0Modules\Advanced\19_spectre.bat"
-if "%c%"=="20" call "%~dp0Modules\Advanced\21_pagefile.bat"
-if "%c%"=="21" call "%~dp0Modules\Advanced\22_nvidia_profile.bat"
-if "%c%"=="22" call "%~dp0Modules\Advanced\23_affinity_msi.bat"
-if "%c%"=="23" call "%~dp0Modules\Advanced\24_steam.bat"
+if "%c%"=="1" call "Modules\Advanced\01_defender.bat"
+if "%c%"=="2" call "Modules\Advanced\02_windows_update.bat"
+if "%c%"=="3" call "Modules\Advanced\03_telemetry.bat"
+if "%c%"=="4" call "Modules\Advanced\04_recommendations.bat"
+if "%c%"=="5" call "Modules\Advanced\05_services.bat"
+if "%c%"=="6" call "Modules\Advanced\06_remove_apps.bat"
+if "%c%"=="7" call "Modules\Advanced\07_power_plan.bat"
+if "%c%"=="8" call "Modules\Advanced\08_gamebar_hags.bat"
+if "%c%"=="9" call "Modules\Advanced\09_network.bat"
+if "%c%"=="10" call "Modules\Advanced\10_powersaving.bat"
+if "%c%"=="11" call "Modules\Advanced\11_timer.bat"
+if "%c%"=="12" call "Modules\Advanced\12_mmcss.bat"
+if "%c%"=="13" call "Modules\Advanced\13_fse.bat"
+if "%c%"=="14" call "Modules\Advanced\14_win32priority.bat"
+if "%c%"=="15" call "Modules\Advanced\15_performance.bat"
+if "%c%"=="16" call "Modules\Advanced\16_vbs.bat"
+if "%c%"=="17" call "Modules\Advanced\17_memory_ntfs.bat"
+if "%c%"=="18" call "Modules\Advanced\18_mouse.bat"
+if "%c%"=="19" call "Modules\Advanced\19_spectre.bat"
+if "%c%"=="20" call "Modules\Advanced\21_pagefile.bat"
+if "%c%"=="21" call "Modules\Advanced\22_nvidia_profile.bat"
+if "%c%"=="22" call "Modules\Advanced\23_affinity_msi.bat"
+if "%c%"=="23" call "Modules\Advanced\24_steam.bat"
 goto full_optimization
