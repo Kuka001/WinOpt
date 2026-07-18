@@ -51,7 +51,7 @@ function Configure-WingetSettings {
         }
         
         $settingsContent = @{
-            `$schema` = "https://aka.ms/winget-settings.schema.json"
+            '$schema' = "https://aka.ms/winget-settings.schema.json"
             network = @{
                 downloader = "wininet"
             }
