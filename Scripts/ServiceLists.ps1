@@ -35,9 +35,6 @@ $RecommendedServices = @(
     'PrintScanBrokerService'
 
     # Bluetooth
-    'bthserv'
-    'BTAGService'
-    'BthAvctpSvc'
 
     # Сеть / Общий доступ
     'LanmanServer'
@@ -46,7 +43,6 @@ $RecommendedServices = @(
     'SharedAccess'
     'SSDPSRV'
     'upnphost'
-    'WFDSConMgrSvc'
     'fdPHost'
     'FDResPub'
     'lltdsvc'
@@ -59,7 +55,6 @@ $RecommendedServices = @(
     'IKEEXT'
     'PolicyAgent'
     'NcaSvc'
-    'wcncsvc'
     'RasAuto'
     'RemoteAccess'
     'WebClient'
@@ -119,7 +114,6 @@ $RecommendedServices = @(
     # UWP / Store
     'AppIDSvc'
     'ApxSvc'
-    'EapHost'
 
     # ЭЦП / Смарт-карты
     'CertPropSvc'
@@ -157,7 +151,6 @@ $RecommendedServices = @(
     'AxInstSV'
     'dcsvc'
     'DmEnrollmentSvc'
-    'dot3svc'
     'embeddedmode'
     'EntAppSvc'
     'cloudidsvc'
@@ -191,7 +184,6 @@ $RecommendedServices = @(
     'Sense'
     'WEPHOSTSVC'
     'wlpasvc'
-    'WwanSvc'
     'BDESVC'
     'WPDBusEnum'
 
@@ -220,6 +212,11 @@ $CriticalServices = @(
     'CoreMessagingRegistrar'
 
     # Сеть (базовая)
+    'WwanSvc'
+    'EapHost'
+    'dot3svc'
+    'wcncsvc'
+    'WFDSConMgrSvc'
     'Dnscache'
     'nsi'
     'BFE'
@@ -250,6 +247,11 @@ $CriticalServices = @(
     'EventSystem'
     'SENS'
     'SystemEventsBroker'
+
+    # Bluetooth
+    'bthserv'
+    'BTAGService'
+    'BthAvctpSvc'
 
     # Устройства / Датчики
     'PlugPlay'
@@ -339,6 +341,12 @@ $CriticalServices = @(
 
 # --- Наборы для быстрого восстановления функциональности ---
 $FixPacks = @(
+    @{
+        Name = 'Wi-Fi и беспроводные сети'
+        Description = 'Службы автонастройки WLAN/WWAN, EAP, подключение к Wi-Fi сетям'
+        Services = @('WlanSvc', 'WwanSvc', 'EapHost', 'wcncsvc', 'dot3svc', 'WFDSConMgrSvc', 'NlaSvc')
+        StartType = 2
+    }
     @{
         Name = 'Bluetooth'
         Description = 'Беспроводные наушники, колонки, клавиатуры'
@@ -448,3 +456,6 @@ $FixPacks = @(
         StartType = 2
     }
 )
+
+
+
