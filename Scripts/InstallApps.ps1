@@ -39,6 +39,31 @@ function Enable-WingetServices {
     }
 }
 
+# Функция настройки конфигурации WinGet (переключение на WinINet)
+function Configure-WingetSettings {
+    Write-Host "Настройка конфигурации WinGet (переключение на WinINet)..." -ForegroundColor Gray
+    $settingsDir = "$env:LOCALAPPDATA\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState"
+    $settingsFile = Join-Path $settingsDir "settings.json"
+    
+    try {
+        if (-not (Test-Path $settingsDir)) {
+            New-Item -Path $settingsDir -ItemType Directory -Force | Out-Null
+        }
+        
+        $settingsContent = @{
+            `$schema` = "https://aka.ms/winget-settings.schema.json"
+            network = @{
+                downloader = "wininet"
+            }
+        } | ConvertTo-Json -Depth 5
+        
+        [System.IO.File]::WriteAllText($settingsFile, $settingsContent, [System.Text.Encoding]::UTF8)
+        Write-Host "Настройки WinGet успешно обновлены (активирован WinINet)." -ForegroundColor Green
+    } catch {
+        Write-Host "Не удалось настроить конфигурацию WinGet: $_" -ForegroundColor DarkYellow
+    }
+}
+
 # Функция исправления ошибок баз данных источников WinGet (0x8a15000f) под администратором
 function Repair-Winget {
     Write-Host "Обнаружены проблемы с базой данных источников WinGet (ошибка 0x8a15000f)." -ForegroundColor Yellow
@@ -67,7 +92,7 @@ function Repair-Winget {
     }
 
     Write-Host "Обновление источников..." -ForegroundColor Gray
-    $pUpdate = Start-Process "winget" -ArgumentList "source update" -PassThru -NoNewWindow -ErrorAction SilentlyContinue
+    $pUpdate = Start-Process "winget" -ArgumentList "source update --accept-source-agreements" -PassThru -NoNewWindow -ErrorAction SilentlyContinue
     if ($pUpdate) {
         $pUpdate.WaitForExit(15000)
         if (-not $pUpdate.HasExited) {
@@ -79,6 +104,9 @@ function Repair-Winget {
 
 # Функция проверки работоспособности winget и его источников
 function Test-Winget {
+    # Сначала всегда принудительно настраиваем WinINet для обхода зависаний Delivery Optimization
+    Configure-WingetSettings
+
     $wingetExists = Get-Command "winget" -ErrorAction SilentlyContinue
     if (-not $wingetExists) { return $false }
     
