@@ -7,11 +7,11 @@ cd /d "%~dp0"
 
 :: Надежная проверка на права Администратора (не зависит от отключенных служб)
 fsutil dirty query %systemdrive% >nul 2>&1
-if %errorLevel% neq 0 (
-    echo Запрос прав Администратора...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe '/k \"%~f0\"' -Verb RunAs"
-    exit /b
-)
+if %errorLevel% equ 0 goto :skip_admin
+echo Запрос прав Администратора...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe '/k \"%~f0\"' -Verb RunAs"
+exit /b
+:skip_admin
 
 :: Подгружаем ядро
 call "%~dp0Core\init.bat"
