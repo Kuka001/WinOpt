@@ -1,4 +1,4 @@
-﻿# --- Рекомендованные к отключению ---
+# --- Рекомендованные к отключению ---
 $RecommendedServices = @(
     # Телеметрия / Диагностика
     'DiagTrack'
@@ -16,11 +16,7 @@ $RecommendedServices = @(
     'pla'
     'whesvc'
 
-    # Windows Update
-    'DoSvc'
-    'UsoSvc'
-    'PushToInstall'
-    'InstallService'
+
 
     # Xbox / Игры
     'XblAuthManager'
@@ -121,7 +117,6 @@ $RecommendedServices = @(
     'edgeupdatem'
 
     # UWP / Store
-    'ClipSVC'
     'AppIDSvc'
     'ApxSvc'
     'EapHost'
@@ -310,11 +305,16 @@ $CriticalServices = @(
     'AudioSrv'
     'AudioEndpointBuilder'
 
-    # UWP / Уведомления
+    # UWP / Уведомления / Store / App Installer (WinGet)
     'AppXSvc'
     'WpnService'
     'WpnUserService*'
     'cbdhsvc*'
+    'ClipSVC'
+    'InstallService'
+    'DoSvc'
+    'PushToInstall'
+    'UsoSvc'
 
 
     # Прочие критические

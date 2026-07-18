@@ -8,7 +8,7 @@ echo Проверка наличия WinGet...
 winget --version >nul 2>&1
 if %errorLevel% neq 0 (
     echo Установка Windows Package Manager WinGet...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; Invoke-WebRequest -Uri 'https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle' -OutFile '%TEMP%\winget.msixbundle' -ErrorAction SilentlyContinue; Add-AppxPackage -Path '%TEMP%\winget.msixbundle' -ErrorAction SilentlyContinue" >nul 2>&1
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Service -Name ClipSVC -StartupType Manual -ErrorAction SilentlyContinue; Set-Service -Name InstallService -StartupType Manual -ErrorAction SilentlyContinue; Set-Service -Name DoSvc -StartupType Manual -ErrorAction SilentlyContinue; Start-Service -Name ClipSVC, InstallService, DoSvc -ErrorAction SilentlyContinue; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; Invoke-WebRequest -Uri 'https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle' -OutFile '%TEMP%\winget.msixbundle' -ErrorAction SilentlyContinue; Add-AppxPackage -Path '%TEMP%\winget.msixbundle' -ErrorAction SilentlyContinue" >nul 2>&1
     
     :: Проверяем еще раз
     winget --version >nul 2>&1

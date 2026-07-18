@@ -1,4 +1,4 @@
-﻿# =====================================================================
+# =====================================================================
 # Скачивание программ: WinGet + Резервный метод (curl / WebClient)
 # Скачивание производится в папку MyProgramsEXE рядом с Start.bat
 # =====================================================================
@@ -131,6 +131,24 @@ function Download-Curl {
     }
 }
 
+# Функция проверки и принудительного запуска необходимых служб для winget
+function Enable-WingetServices {
+    $services = @("ClipSVC", "InstallService", "DoSvc")
+    foreach ($svc in $services) {
+        $s = Get-Service -Name $svc -ErrorAction SilentlyContinue
+        if ($s) {
+            if ($s.StartType -eq "Disabled") {
+                Write-Host "Включение службы $svc..." -ForegroundColor Gray
+                Set-Service -Name $svc -StartupType Manual -ErrorAction SilentlyContinue
+            }
+            if ($s.Status -ne "Running") {
+                Write-Host "Запуск службы $svc..." -ForegroundColor Gray
+                Start-Service -Name $svc -ErrorAction SilentlyContinue
+            }
+        }
+    }
+}
+
 # Функция скачивания через winget
 function Download-Winget {
     param(
@@ -143,6 +161,9 @@ function Download-Winget {
         return $false
     }
 
+    # Убедимся, что необходимые службы включены и запущены перед работой winget
+    Enable-WingetServices
+
     Write-Host ">>> Скачивание: $Name (через winget)..." -ForegroundColor Yellow
 
     $tempDir = Join-Path $env:TEMP "Winget_$($WingetId -replace '[^a-zA-Z0-9]','_')"
@@ -150,6 +171,19 @@ function Download-Winget {
     New-Item -Path $tempDir -ItemType Directory | Out-Null
 
     $p = Start-Process "winget" -ArgumentList "download --id $WingetId -d `"$tempDir`" --accept-source-agreements --accept-package-agreements" -Wait -PassThru -NoNewWindow -ErrorAction SilentlyContinue
+
+    # Попытка восстановления, если winget завершился с ошибкой (например, 0x8a15000f)
+    if ($p.ExitCode -ne 0) {
+        Write-Host "Предупреждение: скачивание через winget не удалось (код $($p.ExitCode)). Пробуем сбросить и обновить источники..." -ForegroundColor Yellow
+        $null = Start-Process "winget" -ArgumentList "source reset --force" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+        $null = Start-Process "winget" -ArgumentList "source update" -Wait -NoNewWindow -PassThru -ErrorAction SilentlyContinue
+        
+        # Вторая попытка скачать после сброса источников
+        Write-Host "Повторная попытка скачивания через winget..." -ForegroundColor Yellow
+        if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force -ErrorAction SilentlyContinue | Out-Null }
+        New-Item -Path $tempDir -ItemType Directory | Out-Null
+        $p = Start-Process "winget" -ArgumentList "download --id $WingetId -d `"$tempDir`" --accept-source-agreements --accept-package-agreements" -Wait -PassThru -NoNewWindow -ErrorAction SilentlyContinue
+    }
 
     $success = $false
     if ($p.ExitCode -eq 0) {

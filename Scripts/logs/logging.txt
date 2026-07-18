@@ -1713,3 +1713,419 @@
 [2026-07-16 20:54:53]     Role         : 'NDIS'
 [2026-07-16 20:54:53]     ClassPath    : 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0002'
 [2026-07-16 20:54:53]     ConfigPath   : 'HKLM:\SYSTEM\CurrentControlSet\Enum\PCI\VEN_8086&DEV_2723&SUBSYS_00848086&REV_1A\4&244E1DBF&0&0012'
+[2026-07-18 20:34:12] HID/Audio precedence:
+[2026-07-18 20:34:12]   LoadedIdentityRecords : 2
+[2026-07-18 20:34:12]   SuppressionBasis      : ProductString and USB VID/PID
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString : 'HIDI2C Device'
+[2026-07-18 20:34:12]   hwId          : 'ELAN06FA&COL01'
+[2026-07-18 20:34:12]   USBSpeed      : <unavailable>
+[2026-07-18 20:34:12]   bInterval     : <unavailable>
+[2026-07-18 20:34:12]   PollingRate   : <unavailable>
+[2026-07-18 20:34:12]   Reason        : Type=Mouse but HIDClass check failed (Class=miss, Service=<none>)
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString : 'HIDI2C Device'
+[2026-07-18 20:34:12]   hwId          : 'ELAN06FA&COL02'
+[2026-07-18 20:34:12]   USBSpeed      : <unavailable>
+[2026-07-18 20:34:12]   bInterval     : <unavailable>
+[2026-07-18 20:34:12]   PollingRate   : <unavailable>
+[2026-07-18 20:34:12]   Reason        : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString   : 'ITE Device(8910)'
+[2026-07-18 20:34:12]   hwId            : 'VID_048D&PID_C100&COL01'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 4
+[2026-07-18 20:34:12]   PollingRate     : 250 Hz (0.25K)
+[2026-07-18 20:34:12]   USBInterface    : MI_00
+[2026-07-18 20:34:12]   EndpointAddress : 0x81
+[2026-07-18 20:34:12]   Interval        : 4 ms
+[2026-07-18 20:34:12]   Reason          : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString : 'HIDI2C Device'
+[2026-07-18 20:34:12]   hwId          : 'ELAN06FA&COL03'
+[2026-07-18 20:34:12]   USBSpeed      : <unavailable>
+[2026-07-18 20:34:12]   bInterval     : <unavailable>
+[2026-07-18 20:34:12]   PollingRate   : <unavailable>
+[2026-07-18 20:34:12]   Reason        : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString   : 'ITE Device(8910)'
+[2026-07-18 20:34:12]   hwId            : 'VID_048D&PID_C100&COL03'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 4
+[2026-07-18 20:34:12]   PollingRate     : 250 Hz (0.25K)
+[2026-07-18 20:34:12]   USBInterface    : MI_00
+[2026-07-18 20:34:12]   EndpointAddress : 0x81
+[2026-07-18 20:34:12]   Interval        : 4 ms
+[2026-07-18 20:34:12]   Reason          : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString   : 'ITE Device(8910)'
+[2026-07-18 20:34:12]   hwId            : 'VID_048D&PID_C100&COL04'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 4
+[2026-07-18 20:34:12]   PollingRate     : 250 Hz (0.25K)
+[2026-07-18 20:34:12]   USBInterface    : MI_00
+[2026-07-18 20:34:12]   EndpointAddress : 0x81
+[2026-07-18 20:34:12]   Interval        : 4 ms
+[2026-07-18 20:34:12]   Reason          : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] HID Device:
+[2026-07-18 20:34:12]   ProductString   : 'MCHOSE A7 Pro'
+[2026-07-18 20:34:12]   Type            : Mouse
+[2026-07-18 20:34:12]   hwId            : 'VID_5253&PID_1021&MI_00'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 1
+[2026-07-18 20:34:12]   PollingRate     : 1000 Hz (1K)
+[2026-07-18 20:34:12]   USBInterface    : MI_00
+[2026-07-18 20:34:12]   EndpointAddress : 0x81
+[2026-07-18 20:34:12]   Interval        : 1 ms
+[2026-07-18 20:34:12]   Reason          : Type=Mouse + HIDClass(Service=HidUsb)
+[2026-07-18 20:34:12] HID Capability:
+[2026-07-18 20:34:12]   ProductString : 'MCHOSE A7 Pro'
+[2026-07-18 20:34:12]   Type          : Mouse
+[2026-07-18 20:34:12]   hwId          : 'VID_5253&PID_1021&MI_00'
+[2026-07-18 20:34:12]   TLC:
+[2026-07-18 20:34:12]     UsagePage : UP=0x0001(GenericDesktop)
+[2026-07-18 20:34:12]     Usage     : U=0x0002(Mouse)
+[2026-07-18 20:34:12]   Reports:
+[2026-07-18 20:34:12]     In      : 8
+[2026-07-18 20:34:12]     Out     : 0
+[2026-07-18 20:34:12]     Feature : 0
+[2026-07-18 20:34:12]   CapCounts:
+[2026-07-18 20:34:12]     LC          : 2
+[2026-07-18 20:34:12]     InBtn       : 1
+[2026-07-18 20:34:12]     InVal       : 4
+[2026-07-18 20:34:12]     InData      : 9
+[2026-07-18 20:34:12]     OutBtn      : 0
+[2026-07-18 20:34:12]     OutVal      : 0
+[2026-07-18 20:34:12]     OutData     : 0
+[2026-07-18 20:34:12]     FeatureBtn  : 0
+[2026-07-18 20:34:12]     FeatureVal  : 0
+[2026-07-18 20:34:12]     FeatureData : 0
+[2026-07-18 20:34:12]   MouseEvidence:
+[2026-07-18 20:34:12]     MouseTLC : True
+[2026-07-18 20:34:12]     RelX     : True
+[2026-07-18 20:34:12]     RelY     : True
+[2026-07-18 20:34:12]     RelXY    : True
+[2026-07-18 20:34:12]     Buttons  : True
+[2026-07-18 20:34:12]     Wheel    : True
+[2026-07-18 20:34:12]     HWheel   : True
+[2026-07-18 20:34:12]   KeyboardEvidence:
+[2026-07-18 20:34:12]     KeyboardTLC    : False
+[2026-07-18 20:34:12]     KeyArrayUP07   : False
+[2026-07-18 20:34:12]     LED_NumLock    : False
+[2026-07-18 20:34:12]     LED_CapsLock   : False
+[2026-07-18 20:34:12]     LED_ScrollLock : False
+[2026-07-18 20:34:12]     LED_All3       : False
+[2026-07-18 20:34:12] HID Capability Details:
+[2026-07-18 20:34:12]   ProductString : 'MCHOSE A7 Pro'
+[2026-07-18 20:34:12]   Type          : Mouse
+[2026-07-18 20:34:12]   hwId          : 'VID_5253&PID_1021&MI_00'
+[2026-07-18 20:34:12]   InputButtonCaps:
+[2026-07-18 20:34:12]     - Cap 1:
+[2026-07-18 20:34:12]         Usage : UP=0x0009(Button) U=0x0001(Button1)..UP=0x0009(Button) U=0x0005(Button5)
+[2026-07-18 20:34:12]         RID   : 1
+[2026-07-18 20:34:12]         LC    : 1
+[2026-07-18 20:34:12]         Link  : UP=0x0001(GenericDesktop) U=0x0001(Usage)
+[2026-07-18 20:34:12]         Range : True
+[2026-07-18 20:34:12]         Abs   : True
+[2026-07-18 20:34:12]         Alias : False
+[2026-07-18 20:34:12]         Data  : 0-4
+[2026-07-18 20:34:12]   InputValueCaps:
+[2026-07-18 20:34:12]     - Cap 1:
+[2026-07-18 20:34:12]         Usage    : UP=0x0001(GenericDesktop) U=0x0031(Y)
+[2026-07-18 20:34:12]         RID      : 1
+[2026-07-18 20:34:12]         LC       : 1
+[2026-07-18 20:34:12]         Link     : UP=0x0001(GenericDesktop) U=0x0001(Usage)
+[2026-07-18 20:34:12]         Range    : False
+[2026-07-18 20:34:12]         Abs      : False
+[2026-07-18 20:34:12]         Alias    : False
+[2026-07-18 20:34:12]         Null     : False
+[2026-07-18 20:34:12]         Bits     : 16
+[2026-07-18 20:34:12]         Count    : 1
+[2026-07-18 20:34:12]         Logical  : -32767..32767
+[2026-07-18 20:34:12]         Physical : 0..0
+[2026-07-18 20:34:12]         Units    : 0x00000000
+[2026-07-18 20:34:12]         UnitsExp : 0x00000000
+[2026-07-18 20:34:12]         Data     : 5-5
+[2026-07-18 20:34:12]     - Cap 2:
+[2026-07-18 20:34:12]         Usage    : UP=0x0001(GenericDesktop) U=0x0030(X)
+[2026-07-18 20:34:12]         RID      : 1
+[2026-07-18 20:34:12]         LC       : 1
+[2026-07-18 20:34:12]         Link     : UP=0x0001(GenericDesktop) U=0x0001(Usage)
+[2026-07-18 20:34:12]         Range    : False
+[2026-07-18 20:34:12]         Abs      : False
+[2026-07-18 20:34:12]         Alias    : False
+[2026-07-18 20:34:12]         Null     : False
+[2026-07-18 20:34:12]         Bits     : 16
+[2026-07-18 20:34:12]         Count    : 1
+[2026-07-18 20:34:12]         Logical  : -32767..32767
+[2026-07-18 20:34:12]         Physical : 0..0
+[2026-07-18 20:34:12]         Units    : 0x00000000
+[2026-07-18 20:34:12]         UnitsExp : 0x00000000
+[2026-07-18 20:34:12]         Data     : 6-6
+[2026-07-18 20:34:12]     - Cap 3:
+[2026-07-18 20:34:12]         Usage    : UP=0x0001(GenericDesktop) U=0x0038(Wheel)
+[2026-07-18 20:34:12]         RID      : 1
+[2026-07-18 20:34:12]         LC       : 1
+[2026-07-18 20:34:12]         Link     : UP=0x0001(GenericDesktop) U=0x0001(Usage)
+[2026-07-18 20:34:12]         Range    : False
+[2026-07-18 20:34:12]         Abs      : False
+[2026-07-18 20:34:12]         Alias    : False
+[2026-07-18 20:34:12]         Null     : False
+[2026-07-18 20:34:12]         Bits     : 8
+[2026-07-18 20:34:12]         Count    : 1
+[2026-07-18 20:34:12]         Logical  : -127..127
+[2026-07-18 20:34:12]         Physical : 0..0
+[2026-07-18 20:34:12]         Units    : 0x00000000
+[2026-07-18 20:34:12]         UnitsExp : 0x00000000
+[2026-07-18 20:34:12]         Data     : 7-7
+[2026-07-18 20:34:12]     - Cap 4:
+[2026-07-18 20:34:12]         Usage    : UP=0x000C(Consumer) U=0x0238(ACPan-HorizontalWheel)
+[2026-07-18 20:34:12]         RID      : 1
+[2026-07-18 20:34:12]         LC       : 1
+[2026-07-18 20:34:12]         Link     : UP=0x0001(GenericDesktop) U=0x0001(Usage)
+[2026-07-18 20:34:12]         Range    : False
+[2026-07-18 20:34:12]         Abs      : False
+[2026-07-18 20:34:12]         Alias    : False
+[2026-07-18 20:34:12]         Null     : False
+[2026-07-18 20:34:12]         Bits     : 8
+[2026-07-18 20:34:12]         Count    : 1
+[2026-07-18 20:34:12]         Logical  : -127..127
+[2026-07-18 20:34:12]         Physical : 0..0
+[2026-07-18 20:34:12]         Units    : 0x00000000
+[2026-07-18 20:34:12]         UnitsExp : 0x00000000
+[2026-07-18 20:34:12]         Data     : 8-8
+[2026-07-18 20:34:12]   OutputButtonCaps : <none>
+[2026-07-18 20:34:12]   OutputValueCaps : <none>
+[2026-07-18 20:34:12]   FeatureButtonCaps : <none>
+[2026-07-18 20:34:12]   FeatureValueCaps : <none>
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString   : 'MCHOSE A7 Pro'
+[2026-07-18 20:34:12]   hwId            : 'VID_5253&PID_1021&MI_01&COL01'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 1
+[2026-07-18 20:34:12]   PollingRate     : 1000 Hz (1K)
+[2026-07-18 20:34:12]   USBInterface    : MI_01
+[2026-07-18 20:34:12]   EndpointAddress : 0x82
+[2026-07-18 20:34:12]   Interval        : 1 ms
+[2026-07-18 20:34:12]   Reason          : Type=Keyboard but HIDClass check failed (Class=miss, Service=<none>)
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString   : 'MCHOSE A7 Pro'
+[2026-07-18 20:34:12]   hwId            : 'VID_5253&PID_1021&MI_02&COL01'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 1
+[2026-07-18 20:34:12]   PollingRate     : 1000 Hz (1K)
+[2026-07-18 20:34:12]   USBInterface    : MI_02
+[2026-07-18 20:34:12]   EndpointAddress : 0x83
+[2026-07-18 20:34:12]   Interval        : 1 ms
+[2026-07-18 20:34:12]   Reason          : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString   : 'MCHOSE A7 Pro'
+[2026-07-18 20:34:12]   hwId            : 'VID_5253&PID_1021&MI_02&COL02'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 1
+[2026-07-18 20:34:12]   PollingRate     : 1000 Hz (1K)
+[2026-07-18 20:34:12]   USBInterface    : MI_02
+[2026-07-18 20:34:12]   EndpointAddress : 0x83
+[2026-07-18 20:34:12]   Interval        : 1 ms
+[2026-07-18 20:34:12]   Reason          : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString   : 'ITE Device(8910)'
+[2026-07-18 20:34:12]   hwId            : 'VID_048D&PID_C100&COL02'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 4
+[2026-07-18 20:34:12]   PollingRate     : 250 Hz (0.25K)
+[2026-07-18 20:34:12]   USBInterface    : MI_00
+[2026-07-18 20:34:12]   EndpointAddress : 0x81
+[2026-07-18 20:34:12]   Interval        : 4 ms
+[2026-07-18 20:34:12]   Reason          : Type=Keyboard but HIDClass check failed (Class=miss, Service=<none>)
+[2026-07-18 20:34:12] HID Device IGNORED (not Mouse/Keyboard/Audio):
+[2026-07-18 20:34:12]   ProductString   : 'MCHOSE A7 Pro'
+[2026-07-18 20:34:12]   hwId            : 'VID_5253&PID_1021&MI_01&COL02'
+[2026-07-18 20:34:12]   USBSpeed        : Full
+[2026-07-18 20:34:12]   bInterval       : 1
+[2026-07-18 20:34:12]   PollingRate     : 1000 Hz (1K)
+[2026-07-18 20:34:12]   USBInterface    : MI_01
+[2026-07-18 20:34:12]   EndpointAddress : 0x82
+[2026-07-18 20:34:12]   Interval        : 1 ms
+[2026-07-18 20:34:12]   Reason          : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] SUMMARY: HID device classification results:
+[2026-07-18 20:34:12]   - HID classification result:
+[2026-07-18 20:34:12]     ProductString : 'MCHOSE A7 Pro'
+[2026-07-18 20:34:12]     Type          : Mouse
+[2026-07-18 20:34:12]     Reason        : Type=Mouse + HIDClass(Service=HidUsb)
+[2026-07-18 20:34:12] SUMMARY: HID devices IGNORED (not classified as Mouse/Keyboard/Audio): 2 unique product(s)
+[2026-07-18 20:34:12]   - HID ignored device:
+[2026-07-18 20:34:12]     ProductString : 'HIDI2C Device'
+[2026-07-18 20:34:12]     hwId          : 'ELAN06FA&COL01'
+[2026-07-18 20:34:12]     Reason        : Type=Mouse but HIDClass check failed (Class=miss, Service=<none>)
+[2026-07-18 20:34:12]   - HID ignored device:
+[2026-07-18 20:34:12]     ProductString : 'ITE Device(8910)'
+[2026-07-18 20:34:12]     hwId          : 'VID_048D&PID_C100&COL01'
+[2026-07-18 20:34:12]     Reason        : Type lookup did not classify as Mouse/Keyboard
+[2026-07-18 20:34:12] Get-USBControllers: Assigned HID role:
+[2026-07-18 20:34:12]   Role       : 'Mouse'
+[2026-07-18 20:34:12]   Controller : 'PCI_VEN_1022_DEV_1639'
+[2026-07-18 20:34:12]   Desc       : '@usbxhci.inf,%pci\cc_0c0330.devicedesc%;USB xHCI Compliant Host Controller'
+[2026-07-18 20:34:12] Get-USBControllers: Final controller map collected for GUI:
+[2026-07-18 20:34:12]   - Controller entry:
+[2026-07-18 20:34:12]     Controller : 'PCI_VEN_10DE_DEV_1ADA'
+[2026-07-18 20:34:12]     Roles      : '<none>'
+[2026-07-18 20:34:12]     Path       : 'HKLM:\SYSTEM\CurrentControlSet\Enum\PCI\\VEN_10DE&DEV_1ADA&SUBSYS_3A4317AA&REV_A1\\4&2DE7D7FD&0&0209'
+[2026-07-18 20:34:12]     Desc       : '@usbxhci.inf,%pci\cc_0c0330.devicedesc%;USB xHCI Compliant Host Controller'
+[2026-07-18 20:34:12]   - Controller entry:
+[2026-07-18 20:34:12]     Controller : 'PCI_VEN_1022_DEV_1639'
+[2026-07-18 20:34:12]     Roles      : 'Mouse'
+[2026-07-18 20:34:12]     Path       : 'HKLM:\SYSTEM\CurrentControlSet\Enum\PCI\\VEN_1022&DEV_1639&SUBSYS_381117AA&REV_00\\4&20C24D55&0&0341'
+[2026-07-18 20:34:12]     Desc       : '@usbxhci.inf,%pci\cc_0c0330.devicedesc%;USB xHCI Compliant Host Controller'
+[2026-07-18 20:34:12] Get-USBControllers: Controller origin:
+[2026-07-18 20:34:12]   Controller : 'PCI_VEN_10DE_DEV_1ADA'
+[2026-07-18 20:34:12]   Origin     : 'Chipset'
+[2026-07-18 20:34:12]   InstanceId : 'PCI\\VEN_10DE&DEV_1ADA&SUBSYS_3A4317AA&REV_A1\\4&2DE7D7FD&0&0209'
+[2026-07-18 20:34:12] Get-USBControllers: Controller origin:
+[2026-07-18 20:34:12]   Controller : 'PCI_VEN_1022_DEV_1639'
+[2026-07-18 20:34:12]   Origin     : 'Chipset'
+[2026-07-18 20:34:12]   InstanceId : 'PCI\\VEN_1022&DEV_1639&SUBSYS_381117AA&REV_00\\4&20C24D55&0&0341'
+[2026-07-18 20:34:13] Get-PCIDevices: PnP Display GPU matched:
+[2026-07-18 20:34:13]   Name       : 'NVIDIA GeForce RTX 2060'
+[2026-07-18 20:34:13]   InstanceId : 'PCI\VEN_10DE&DEV_1F15&SUBSYS_3A4717AA&REV_A1\4&2DE7D7FD&0&0009'
+[2026-07-18 20:34:13]   Status     : 'OK'
+[2026-07-18 20:34:13] Get-PCIDevices: GPU detected:
+[2026-07-18 20:34:13]   Path              : 'Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\PCI\VEN_10DE&DEV_1F15&SUBSYS_3A4717AA&REV_A1\4&2de7d7fd&0&0009'
+[2026-07-18 20:34:13]   Port              : '4&2de7d7fd&0'
+[2026-07-18 20:34:13]   ChipsetDesc       : '@oem9.inf,%nvidia_dev.1f15.3a47.17aa%;NVIDIA GeForce RTX 2060'
+[2026-07-18 20:34:13]   ResolvedVideoCard : 'Lenovo GeForce RTX 2060'
+[2026-07-18 20:34:13] Get-PCIDevices: IGNORED Audio controller (no mapping):
+[2026-07-18 20:34:13]   PNPID  : 'PCI_VEN_10DE_DEV_10F9'
+[2026-07-18 20:34:13]   Path   : 'Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\PCI\VEN_10DE&DEV_10F9&SUBSYS_10F910DE&REV_A1\4&2de7d7fd&0&0109'
+[2026-07-18 20:34:13]   Desc   : '@hdaudbus.inf,%hdaudio.devicedesc%;High Definition Audio Controller'
+[2026-07-18 20:34:13]   Reason : No audio endpoint mapping found
+[2026-07-18 20:34:13]   Checked AudioEndpoint(s):
+[2026-07-18 20:34:13]     Count           : 2
+[2026-07-18 20:34:13]     ControllerPNPID : 'PCI_VEN_10DE_DEV_10F9'
+[2026-07-18 20:34:13]     - Endpoint 'Динамики (Realtek(R) Audio)':
+[2026-07-18 20:34:13]       InstanceId : 'SWD\MMDEVAPI\{0.0.0.00000000}.{7C8916DB-0BCD-4EE9-8299-C301D6BD63C5}'
+[2026-07-18 20:34:13]       Detail     : could not resolve any PCI/USB parent controller in device tree
+[2026-07-18 20:34:13]     - Endpoint 'Набор микрофонов (Realtek(R) Audio)':
+[2026-07-18 20:34:13]       InstanceId : 'SWD\MMDEVAPI\{0.0.1.00000000}.{74151C43-D3CA-4F97-9ECA-7B2A57AC52AF}'
+[2026-07-18 20:34:13]       Detail     : could not resolve any PCI/USB parent controller in device tree
+[2026-07-18 20:34:13] Get-PCIDevices: IGNORED Audio controller (no mapping):
+[2026-07-18 20:34:13]   PNPID  : 'PCI_VEN_1022_DEV_15E3'
+[2026-07-18 20:34:13]   Path   : 'Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\PCI\VEN_1022&DEV_15E3&SUBSYS_382417AA&REV_00\4&20c24d55&0&0641'
+[2026-07-18 20:34:13]   Desc   : '@hdaudbus.inf,%hdaudio.devicedesc%;High Definition Audio Controller'
+[2026-07-18 20:34:13]   Reason : No audio endpoint mapping found
+[2026-07-18 20:34:13]   Checked AudioEndpoint(s):
+[2026-07-18 20:34:13]     Count           : 2
+[2026-07-18 20:34:13]     ControllerPNPID : 'PCI_VEN_1022_DEV_15E3'
+[2026-07-18 20:34:13]     - Endpoint 'Динамики (Realtek(R) Audio)':
+[2026-07-18 20:34:13]       InstanceId : 'SWD\MMDEVAPI\{0.0.0.00000000}.{7C8916DB-0BCD-4EE9-8299-C301D6BD63C5}'
+[2026-07-18 20:34:13]       Detail     : could not resolve any PCI/USB parent controller in device tree
+[2026-07-18 20:34:13]     - Endpoint 'Набор микрофонов (Realtek(R) Audio)':
+[2026-07-18 20:34:13]       InstanceId : 'SWD\MMDEVAPI\{0.0.1.00000000}.{74151C43-D3CA-4F97-9ECA-7B2A57AC52AF}'
+[2026-07-18 20:34:13]       Detail     : could not resolve any PCI/USB parent controller in device tree
+[2026-07-18 20:34:13] Get-PCIDevices: Summary:
+[2026-07-18 20:34:13]   GPUsFound                : 1
+[2026-07-18 20:34:13]   AudioControllersIncluded : 0
+[2026-07-18 20:34:13]   AudioControllersIgnored  : 2
+[2026-07-18 20:34:13] SUMMARY: Audio controllers IGNORED: 2 controller(s)
+[2026-07-18 20:34:13]   - Ignored audio controller:
+[2026-07-18 20:34:13]     PNPID : 'PCI_VEN_10DE_DEV_10F9'
+[2026-07-18 20:34:13]     Path  : 'Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\PCI\VEN_10DE&DEV_10F9&SUBSYS_10F910DE&REV_A1\4&2de7d7fd&0&0109'
+[2026-07-18 20:34:13]     Desc  : '@hdaudbus.inf,%hdaudio.devicedesc%;High Definition Audio Controller'
+[2026-07-18 20:34:13]     EndpointNames:
+[2026-07-18 20:34:13]       - 'Динамики (Realtek(R) Audio)'
+[2026-07-18 20:34:13]       - 'Набор микрофонов (Realtek(R) Audio)'
+[2026-07-18 20:34:13]     Reason: No audio endpoint mapping found
+[2026-07-18 20:34:13]     Checked AudioEndpoint(s):
+[2026-07-18 20:34:13]       Count : 2
+[2026-07-18 20:34:13]       - Endpoint 'Динамики (Realtek(R) Audio)':
+[2026-07-18 20:34:13]         InstanceId : 'SWD\MMDEVAPI\{0.0.0.00000000}.{7C8916DB-0BCD-4EE9-8299-C301D6BD63C5}'
+[2026-07-18 20:34:13]         Detail     : could not resolve any PCI/USB parent controller in device tree
+[2026-07-18 20:34:13]       - Endpoint 'Набор микрофонов (Realtek(R) Audio)':
+[2026-07-18 20:34:13]         InstanceId : 'SWD\MMDEVAPI\{0.0.1.00000000}.{74151C43-D3CA-4F97-9ECA-7B2A57AC52AF}'
+[2026-07-18 20:34:13]         Detail     : could not resolve any PCI/USB parent controller in device tree
+[2026-07-18 20:34:13]   - Ignored audio controller:
+[2026-07-18 20:34:13]     PNPID : 'PCI_VEN_1022_DEV_15E3'
+[2026-07-18 20:34:13]     Path  : 'Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\PCI\VEN_1022&DEV_15E3&SUBSYS_382417AA&REV_00\4&20c24d55&0&0641'
+[2026-07-18 20:34:13]     Desc  : '@hdaudbus.inf,%hdaudio.devicedesc%;High Definition Audio Controller'
+[2026-07-18 20:34:13]     EndpointNames:
+[2026-07-18 20:34:13]       - 'Динамики (Realtek(R) Audio)'
+[2026-07-18 20:34:13]       - 'Набор микрофонов (Realtek(R) Audio)'
+[2026-07-18 20:34:13]     Reason: No audio endpoint mapping found
+[2026-07-18 20:34:13]     Checked AudioEndpoint(s):
+[2026-07-18 20:34:13]       Count : 2
+[2026-07-18 20:34:13]       - Endpoint 'Динамики (Realtek(R) Audio)':
+[2026-07-18 20:34:13]         InstanceId : 'SWD\MMDEVAPI\{0.0.0.00000000}.{7C8916DB-0BCD-4EE9-8299-C301D6BD63C5}'
+[2026-07-18 20:34:13]         Detail     : could not resolve any PCI/USB parent controller in device tree
+[2026-07-18 20:34:13]       - Endpoint 'Набор микрофонов (Realtek(R) Audio)':
+[2026-07-18 20:34:13]         InstanceId : 'SWD\MMDEVAPI\{0.0.1.00000000}.{74151C43-D3CA-4F97-9ECA-7B2A57AC52AF}'
+[2026-07-18 20:34:13]         Detail     : could not resolve any PCI/USB parent controller in device tree
+[2026-07-18 20:34:13] Optimized-GetStorageDevices: Get-PhysicalDisk returned 0 disk(s)
+[2026-07-18 20:34:13] Optimized-GetStorageDevices: Win32_DiskDrive returned 1 disk(s) for correlation
+[2026-07-18 20:34:13] Optimized-GetStorageDevices: Summary:
+[2026-07-18 20:34:13]   StorageDevicesMatched : 0
+[2026-07-18 20:34:13]   CorrelatedDisks       : 0
+[2026-07-18 20:34:12] Get-NetworkAdapters: Get-NetAdapter -Physical returned 2 adapter(s)
+[2026-07-18 20:34:12]   Physical adapter:
+[2026-07-18 20:34:12]     InterfaceDescription : 'Realtek PCIe GbE Family Controller'
+[2026-07-18 20:34:12]     Status               : Disconnected
+[2026-07-18 20:34:12]   Physical adapter:
+[2026-07-18 20:34:12]     InterfaceDescription : 'Intel(R) Wi-Fi 6 AX200 160MHz'
+[2026-07-18 20:34:12]     Status               : Up
+[2026-07-18 20:34:12] Get-NetworkAdapters: 'Intel(R) Wi-Fi 6 AX200 160MHz' matched physical adapter
+[2026-07-18 20:34:12] Get-NetworkAdapters: Detected network adapter:
+[2026-07-18 20:34:12]   Name            : 'Intel(R) Wi-Fi 6 AX200 160MHz'
+[2026-07-18 20:34:12]   ResolvedName    : 'Intel Intel(R) Wi-Fi 6 AX200 160MHz'
+[2026-07-18 20:34:12]   Role            : 'NDIS'
+[2026-07-18 20:34:12]   Type            : 'NDIS'
+[2026-07-18 20:34:12]   PNPID           : 'PCI_VEN_8086_DEV_2723'
+[2026-07-18 20:34:12]   ClassPath       : 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000'
+[2026-07-18 20:34:12]   ConfigPath      : 'HKLM:\SYSTEM\CurrentControlSet\Enum\PCI\VEN_8086&DEV_2723&SUBSYS_00848086&REV_1A\4&244E1DBF&0&0012'
+[2026-07-18 20:34:12]   Service         : 'HKLM:\SYSTEM\CurrentControlSet\Services\Netwtw10'
+[2026-07-18 20:34:12]   ImagePath       : '\SystemRoot\System32\drivers\Netwtw10.sys'
+[2026-07-18 20:34:12]   ResolvedPath    : 'C:\WINDOWS\System32\drivers\Netwtw10.sys'
+[2026-07-18 20:34:12]   FileDescription : 'Intel® Wireless WiFi Link Driver'
+[2026-07-18 20:34:12] Get-NetworkAdapters: 'Realtek PCIe GbE Family Controller' matched physical adapter
+[2026-07-18 20:34:12] Get-NetworkAdapters: Detected network adapter:
+[2026-07-18 20:34:12]   Name            : 'Realtek PCIe GbE Family Controller'
+[2026-07-18 20:34:12]   ResolvedName    : 'Realtek Semiconductor RTL8111 PCIe GbE Family Controller'
+[2026-07-18 20:34:12]   Role            : 'NetAdapterCx'
+[2026-07-18 20:34:12]   Type            : 'NetAdapterCx'
+[2026-07-18 20:34:12]   PNPID           : 'PCI_VEN_10EC_DEV_8168'
+[2026-07-18 20:34:12]   ClassPath       : 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0001'
+[2026-07-18 20:34:12]   ConfigPath      : 'HKLM:\SYSTEM\CurrentControlSet\Enum\PCI\VEN_10EC&DEV_8168&SUBSYS_38FA17AA&REV_15\01000000684CE00000'
+[2026-07-18 20:34:12]   Service         : 'HKLM:\SYSTEM\CurrentControlSet\Services\rtcx21'
+[2026-07-18 20:34:12]   ImagePath       : '\SystemRoot\System32\DriverStore\FileRepository\rtcx21x64.inf_amd64_feec7a9662e785f0\rtcx21x64.sys'
+[2026-07-18 20:34:12]   ResolvedPath    : 'C:\WINDOWS\System32\DriverStore\FileRepository\rtcx21x64.inf_amd64_feec7a9662e785f0\rtcx21x64.sys'
+[2026-07-18 20:34:12]   FileDescription : 'Realtek NetAdapter Driver'
+[2026-07-18 20:34:12] Get-NetworkAdapters: Adapter IGNORED:
+[2026-07-18 20:34:12]   Name        : 'Microsoft Kernel Debug Network Adapter'
+[2026-07-18 20:34:12]   PNPDeviceID : 'ROOT\KDNIC\0000'
+[2026-07-18 20:34:12]   Reason      : Not present in Get-NetAdapter -Physical (virtual/software adapter)
+[2026-07-18 20:34:12] Get-NetworkAdapters: Adapter IGNORED:
+[2026-07-18 20:34:12]   Name        : 'Microsoft Wi-Fi Direct Virtual Adapter'
+[2026-07-18 20:34:12]   PNPDeviceID : '{5D624F94-8850-40C3-A3FA-A4FD2080BAF3}\VWIFIMP_WFD\5&2228A63E&0&11'
+[2026-07-18 20:34:12]   Reason      : Not present in Get-NetAdapter -Physical (virtual/software adapter)
+[2026-07-18 20:34:12] Get-NetworkAdapters: Adapter IGNORED:
+[2026-07-18 20:34:12]   Name        : 'Microsoft Wi-Fi Direct Virtual Adapter #2'
+[2026-07-18 20:34:12]   PNPDeviceID : '{5D624F94-8850-40C3-A3FA-A4FD2080BAF3}\VWIFIMP_WFD\5&2228A63E&0&12'
+[2026-07-18 20:34:12]   Reason      : Not present in Get-NetAdapter -Physical (virtual/software adapter)
+[2026-07-18 20:34:12] Get-NetworkAdapters: Adapter IGNORED:
+[2026-07-18 20:34:12]   Name        : 'Bluetooth Device (Personal Area Network)'
+[2026-07-18 20:34:12]   PNPDeviceID : 'BTH\MS_BTHPAN\7&2891B728&0&2'
+[2026-07-18 20:34:12]   Reason      : Not present in Get-NetAdapter -Physical (virtual/software adapter)
+[2026-07-18 20:34:12] Get-NetworkAdapters: Summary:
+[2026-07-18 20:34:12]   NetworkAdaptersDetected  : 2
+[2026-07-18 20:34:12]   Win32NetworkAdapterTotal : 6
+[2026-07-18 20:34:12]   IgnoredSkipped           : 4
+[2026-07-18 20:34:12]   Detected Adapter:
+[2026-07-18 20:34:12]     Name         : 'Intel Intel(R) Wi-Fi 6 AX200 160MHz'
+[2026-07-18 20:34:12]     OriginalName : 'Intel(R) Wi-Fi 6 AX200 160MHz'
+[2026-07-18 20:34:12]     Role         : 'NDIS'
+[2026-07-18 20:34:12]     ClassPath    : 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000'
+[2026-07-18 20:34:12]     ConfigPath   : 'HKLM:\SYSTEM\CurrentControlSet\Enum\PCI\VEN_8086&DEV_2723&SUBSYS_00848086&REV_1A\4&244E1DBF&0&0012'
+[2026-07-18 20:34:12]   Detected Adapter:
+[2026-07-18 20:34:12]     Name         : 'Realtek Semiconductor RTL8111 PCIe GbE Family Controller'
+[2026-07-18 20:34:12]     OriginalName : 'Realtek PCIe GbE Family Controller'
+[2026-07-18 20:34:12]     Role         : 'NetAdapterCx'
+[2026-07-18 20:34:12]     ClassPath    : 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0001'
+[2026-07-18 20:34:12]     ConfigPath   : 'HKLM:\SYSTEM\CurrentControlSet\Enum\PCI\VEN_10EC&DEV_8168&SUBSYS_38FA17AA&REV_15\01000000684CE00000'
