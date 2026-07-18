@@ -10,7 +10,7 @@ fsutil dirty query %systemdrive% >nul 2>&1
 if %errorLevel% equ 0 goto :skip_admin
 echo Запрос прав Администратора...
 set "MY_DP0=%~dp0"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe -ArgumentList ('/k ' + [char]34 + $env:MY_DP0 + 'Start.bat' + [char]34) -Verb RunAs"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe -ArgumentList ('/k cd /d ' + [char]34 + $env:MY_DP0 + [char]34 + ' && Start.bat') -Verb RunAs"
 exit /b
 :skip_admin
 
