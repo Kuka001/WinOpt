@@ -144,7 +144,6 @@ $RecommendedServices = @(
     'FvSvc'
     'WSearch'
     'DisplayEnhancementService'
-    'ShellHWDetection'
     'ADPSvc'
     'AppMgmt'
     'autotimesvc'
@@ -196,7 +195,6 @@ $RecommendedServices = @(
     # Прочее
     'IpxlatCfgSvc'
     'tzautoupdate'
-    'DsmSvc'
 )
 
 # --- Критические: НЕЛЬЗЯ отключать ---
@@ -254,6 +252,8 @@ $CriticalServices = @(
     'BthAvctpSvc'
 
     # Устройства / Датчики
+    'ShellHWDetection'
+    'DsmSvc'
     'PlugPlay'
     'DeviceAssociationService'
     'DeviceInstall'
@@ -456,6 +456,7 @@ $FixPacks = @(
         StartType = 2
     }
 )
+
 
 
 
