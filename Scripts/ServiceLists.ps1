@@ -39,8 +39,7 @@ $RecommendedServices = @(
     # Сеть / Общий доступ
     'LanmanServer'
     'lmhosts'
-    'CDPSvc'
-    'SharedAccess'
+'SharedAccess'
     'SSDPSRV'
     'upnphost'
     'fdPHost'
@@ -54,8 +53,7 @@ $RecommendedServices = @(
     'ALG'
     'IKEEXT'
     'PolicyAgent'
-    'NcaSvc'
-    'RasAuto'
+'RasAuto'
     'RemoteAccess'
     'WebClient'
     'WinRM'
@@ -235,6 +233,9 @@ $CriticalServices = @(
     'NetSetupSvc'
     'CloudflareWARP'
 
+    'CDPSvc'
+    'NcaSvc'
+    'ncsi'
     # Профили / Пользователи
     'ProfSvc'
     'UserManager'
