@@ -20,12 +20,13 @@ echo %G%10.%X% Revo Uninstaller
 echo %G%11.%X% NVCleanstall
 echo %G%12.%X% Autoruns (Sysinternals)
 echo %G%13.%X% NVIDIA Profile Inspector
+echo %G%14.%X% Visual C++ Redistributable AIO (abbodi1406)
 echo.
 echo %G%A.%X% Скачать все приложения
 echo %R%[Enter] Назад%X%
 echo %Y%==========================================================%X%
 set "choice="
-set /p choice="Выберите приложение для скачивания (1-13, A или Enter): "
+set /p choice="Выберите приложение для скачивания (1-14, A или Enter): "
 
 if not defined choice exit /b
 
@@ -36,7 +37,7 @@ if /i "%choice%"=="A" (
 )
 
 set "valid="
-for /L %%i in (1,1,13) do (
+for /L %%i in (1,1,14) do (
     if "%choice%"=="%%i" set valid=1
 )
 if defined valid (

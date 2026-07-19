@@ -36,6 +36,7 @@ $apps = @{
     "11" = @("NVCleanstall", "techpowerup", "NVCleanstall_setup.exe", "")
     "12" = @("Autoruns (Sysinternals)", "https://download.sysinternals.com/files/Autoruns.zip", "Autoruns.zip", "")
     "13" = @("NVIDIA Profile Inspector", "https://github.com/Orbmu2k/nvidiaProfileInspector/releases/latest/download/nvidiaProfileInspector.zip", "nvidiaProfileInspector.zip", "")
+    "14" = @("Visual C++ Redistributable AIO (abbodi1406)", "https://github.com/abbodi1406/vcredist/releases/latest/download/VisualCppRedist_AIO_x86_x64.exe", "VisualCppRedist_AIO_x86_x64.exe", "")
 }
 
 # Функция скачивания через curl
