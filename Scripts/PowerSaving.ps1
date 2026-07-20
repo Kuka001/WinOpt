@@ -1,7 +1,7 @@
 ﻿$results = [System.Collections.Generic.List[object]]::new()
 function Add-R($A,$T,$S,$M){$null=$results.Add([pscustomobject]@{Area=$A;Target=$T;Success=$S;Message=$M})}
 
-# ���� ����� ��������� PnP � �������������� CIM (������ Get-WmiObject ��� ������������� � PS 7)
+# Кэш имен устройств PnP с использованием CIM (взамен Get-WmiObject для совместимости с PS 7)
 $pnpMap = @{}
 try {
     Get-CimInstance -ClassName Win32_PnPEntity -EA Stop | ForEach-Object {
@@ -20,7 +20,7 @@ function Get-Label($Id){
     return $Id
 }
 
-# ���������� ���������������� ����� ���������� CIM (WMI)
+# Выключение энергосбережения через свойства классов CIM (WMI)
 function Do-CimDisable($Class,$Area){
     try {
         $items = @(Get-CimInstance -Namespace root\wmi -ClassName $Class -EA Stop)
@@ -50,7 +50,7 @@ function Do-CimDisable($Class,$Area){
 Do-CimDisable 'MSPower_DeviceEnable' 'Allow turn-off to save power'
 Do-CimDisable 'MSPower_DeviceWakeEnable' 'Allow wake computer'
 
-# ��������� ����������� ��������� ����� powercfg
+# Отключение возможности пробуждения через утилиту powercfg
 try {
     $wd = @(powercfg -devicequery wake_programmable 2>$null | Where-Object{$_ -and $_.Trim()})
     if($wd){
@@ -66,7 +66,7 @@ try {
     Add-R 'Wake powercfg' 'powercfg' $false $_.Exception.Message
 }
 
-# ���������� ���������������� ������� ���������
+# Выключение энергосбережения сетевых адаптеров
 try {
     Import-Module NetAdapter -EA Stop
 } catch {
@@ -82,7 +82,7 @@ if(Get-Command Disable-NetAdapterPowerManagement -EA 0){
     foreach($a in $adps){
         $t = "$($a.Name)|$($a.InterfaceDescription)"
         try {
-            # ���������, ������������ �� ������� ���������� �������� (��������� ����������� ����� ����� kdnic)
+            # Проверяем, поддерживает ли сетевой адаптер управление питанием (некоторые виртуальные вроде kdnic)
             $pm = $null
             try { $pm = Get-NetAdapterPowerManagement -Name $a.Name -EA Stop } catch {}
             
@@ -99,17 +99,17 @@ if(Get-Command Disable-NetAdapterPowerManagement -EA 0){
     }
 }
 
-# ���������� ���������� ���������������� � �������� ����� ������� ��
+# Отключение энергосбережения в активной схеме питания Windows
 try {
-    # ���������� PCI Express ASPM (���������������� ����)
+    # Отключение PCI Express ASPM (энергосбережение шины)
     $null = powercfg -setacvalueindex SCHEME_CURRENT SUB_PCIEXPRESS ASPM 0 2>&1
     $null = powercfg -setdcvalueindex SCHEME_CURRENT SUB_PCIEXPRESS ASPM 0 2>&1
     
-    # ���������� USB Selective Suspend (���������� ������������ USB)
+    # Отключение USB Selective Suspend (выключение простоя USB)
     $null = powercfg -setacvalueindex SCHEME_CURRENT SUB_USB usbenableprep 0 2>&1
     $null = powercfg -setdcvalueindex SCHEME_CURRENT SUB_USB usbenableprep 0 2>&1
     
-    # ���������� ��������� �����
+    # Применение изменений схемы
     $oActive = powercfg -setactive SCHEME_CURRENT 2>&1
     $msgActive = if ($LASTEXITCODE -eq 0) { if ($oActive) { $oActive-join' ' } else { "Applied successfully" } } else { $oActive-join' ' }
     Add-R 'Power Scheme' 'PCIe ASPM & USB Suspend' ($LASTEXITCODE-eq0) $msgActive
@@ -117,7 +117,7 @@ try {
     Add-R 'Power Scheme' 'Power Plan Global Config' $false $_.Exception.Message
 }
 
-# ��������� ���������� ������� ��� USB � Bluetooth-���������
+# Настройка параметров питания для USB и Bluetooth-устройств
 $usbRoots = @('HKLM:\SYSTEM\CurrentControlSet\Enum\USB','HKLM:\SYSTEM\CurrentControlSet\Enum\USBSTOR','HKLM:\SYSTEM\CurrentControlSet\Enum\USBPRINT','HKLM:\SYSTEM\CurrentControlSet\Enum\BTHUSB')
 $usbVals = @('EnhancedPowerManagementEnabled','SelectiveSuspendEnabled','EnableSelectiveSuspend','AllowIdleIrpInD3')
 $usbPaths = @()
@@ -169,7 +169,7 @@ foreach($path in $usbPaths){
     }
 }
 
-# ����� ����������� ������
+# Вывод результатов работы
 $areas = @('Allow turn-off to save power','Allow wake computer','Wake powercfg','NetAdapter PM','USB registry','Power Scheme','Env')
 foreach($area in $areas){
     $grp = @($results | Where-Object{$_.Area-eq$area})

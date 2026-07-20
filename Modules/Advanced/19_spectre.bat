@@ -13,7 +13,7 @@ set "c=" & set /p c="Выбор (Enter=назад): "
 if "%c%"=="" exit /b
 
 if "%c%"=="1" (
-    :: 33554435 (0x2000003) отключает Spectre/Meltdown (3) + Downfall (33554432)
+    rem 33554435 (0x2000003) отключает Spectre/Meltdown (3) + Downfall (33554432)
     reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "FeatureSettingsOverride" /t REG_DWORD /d 33554435 /f >nul 2>&1
     reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "FeatureSettingsOverrideMask" /t REG_DWORD /d 3 /f >nul 2>&1
     

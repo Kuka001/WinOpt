@@ -23,13 +23,13 @@ echo.
 set "c=" & set /p c="Выбор (Enter=назад): "
 if "%c%"=="" exit /b
 if "%c%"=="1" (
-    :: DisablePagingExecutive - запрет сброса ядра и драйверов в файл подкачки
+    rem DisablePagingExecutive - запрет сброса ядра и драйверов в файл подкачки
     reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "DisablePagingExecutive" /t REG_DWORD /d 1 /f >nul 2>&1
     
-    :: Отключение обновления времени последнего доступа к файлам
+    rem Отключение обновления времени последнего доступа к файлам
     fsutil behavior set disablelastaccess 1 >nul 2>&1
     
-    :: Отключение создания коротких имен 8.3
+    rem Отключение создания коротких имен 8.3
     fsutil behavior set disable8dot3 1 >nul 2>&1
     
     echo.
@@ -39,13 +39,13 @@ if "%c%"=="1" (
     pause & goto memory_ntfs
 )
 if "%c%"=="0" (
-    :: Возврат по умолчанию для DisablePagingExecutive
+    rem Возврат по умолчанию для DisablePagingExecutive
     reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "DisablePagingExecutive" /t REG_DWORD /d 0 /f >nul 2>&1
     
-    :: Возврат к системному управлению временем доступа (2 - System Managed)
+    rem Возврат к системному управлению временем доступа (2 - System Managed)
     fsutil behavior set disablelastaccess 2 >nul 2>&1
     
-    :: Возврат к стандартному поведению 8.3 (2 - управление на уровне тома)
+    rem Возврат к стандартному поведению 8.3 (2 - управление на уровне тома)
     fsutil behavior set disable8dot3 2 >nul 2>&1
     
     echo.
