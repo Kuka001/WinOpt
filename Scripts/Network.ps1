@@ -119,12 +119,12 @@ if (Test-Path $ncsiPath) {
     Set-ItemProperty -Path $ncsiPath -Name "WebTimeout" -Value 5 -Type DWord -Force -EA 0
 }
 
-# Удаление блокирующих политик NCSI, если они были заданы
+# Настройка политик NCSI (разрешение активных зондов и принудительное использование глобального DNS)
 $policyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkConnectivityStatusIndicator"
-if (Test-Path $policyPath) {
-    Remove-ItemProperty -Path $policyPath -Name "NoActiveProbe" -Force -ErrorAction SilentlyContinue
-    Remove-ItemProperty -Path $policyPath -Name "DisablePassivePolling" -Force -ErrorAction SilentlyContinue
-}
+if (!(Test-Path $policyPath)) { New-Item $policyPath -Force | Out-Null }
+Set-ItemProperty -Path $policyPath -Name "UseGlobalDNS" -Value 1 -Type DWord -Force -EA 0
+Remove-ItemProperty -Path $policyPath -Name "NoActiveProbe" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path $policyPath -Name "DisablePassivePolling" -Force -ErrorAction SilentlyContinue
 
 # Решение проблемы "Без подключения к интернету" при включенном IPv6 без внешнего маршрута (приоритет IPv4)
 $tcpip6Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters"
